@@ -6,8 +6,10 @@
         <meta name="viewport" content="width=device_width, initial_scale=1">
         <title>Ann's Website</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384_9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <link href="styles.css" rel="stylesheet">
     </head>
     <body>
+      <main>
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid">
               <a class="navbar-brand" href="#">Ann's Website</a>
@@ -27,14 +29,70 @@
                   </li>
                 </ul>
                 <span class="navbar-text">
-                  Navbar text with an inline element
+                  Add if needed
                 </span>
               </div>
             </div>
           </nav>
-          <aside>
-            <img src="ann.jpg" alt="Picture of Ann" id="profile">
-          </aside>
+          <div style="background-color: white; width: 100%; height: 650px;">
+            <div style="background-color: white; width: 50%; height: 550px; float:left;">
+              <aside>
+                <div id="centered-aside">
+                  <h1 id="name">Hello, my name is Ann.</h1>
+                  <img src="ann.jpg" alt="Picture of Ann" id="profile">
+                </div>
+              </aside>
+            </div>
+
+            <div style="background-color: white; width:50%; height: 550px; float:left;">
+              <section>
+                <h1>Resume</h1>
+                <article>
+                  <h2>Skills</h2>
+                  <ul>
+                    <li> Programming Languages and Frameworks: Java, JavaScript, CSS, HTML, SQL, Python, C, C++ </li>
+                    <li> Tools: Git/GitHub, AWS, Visual Studio Code, Slack, Microsoft Office, API’s </li>
+                  </ul>
+                  <h2>Education</h2>
+                  <ul>
+                    <li>GPA: 3.6/4</li>
+                    <li>Accepted into the UW Academy program, attending UW at the age of 16</li>
+                    <li>UW Deans List for Fall 2020, Spring 2021, Fall 2021, Winter 2022, Spring 2022, Fall 2023, Winter 2023</li>
+                    <li>Relevant Coursework: Data Structures and Parallelism, Intro to AI, Intro to
+                        Web Design, Intro to Database Systems, Calculus series, Foundations of
+                        Computing I & II, The Hardware/Software interface, Software Design and Implementation, Systems Programming
+                    </li>
+                  </ul>
+                  <h2>Experience</h2>
+                  <h4>Foursquare – Software Engineering Intern | June 2022 – September 2022</h4>
+                  <ul>
+                    <li>Worked with the data platform team to improve data dumps</li>
+                    <li>Created an automated backup pipeline that saves 10-15 on call hours</li>
+                    <li>Wrote from scratch a directed acyclic graph using Apache Airflow Operators that copies data from MongoDB to AWS S3 buckets that is used to optimize the data flow</li>
+                    <li>Created a database table on AWS Athena that queries through CloudWatch logs to retrieve information about S3 objects</li>
+                  </ul>
+                  <h4>University of Washington Robinson Center – Teaching Assistant | June 2021 – January 2022</h4>
+                  <ul>
+                    <li>Reviewed and edited papers that 5-6th grade students wrote</li>
+                    <li>Substituted for a teacher and taught a class on philosophy to 1st-8th grade students</li>
+                    <li>Assisted the teacher with answering student’s questions and supervised the students during lunch periods, as well as pick up and drop off times</li>
+                  </ul>
+                  <h4>App Esteem – Deceptor Hunter | November 2018 – June 2019</h4>
+                  <ul>
+                    <li>Worked on helping app vendors develop and deliver consumer clean apps, by analyzing their current app and providing feedback</li>
+                    <li>Created a project with Python that creates screenshots and organizes them by the select app that they are working with</li>
+                  </ul>
+                  <h2>Projects</h2>
+                  <h4></h4>
+                </article>
+              </section>
+            </div>
+        </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384_geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-    </body>
+        </main>
+      </body>
+    <footer>
+      <p>© Ann Baturytski. All rights reserved. Other attributions cited in document or
+      page source</p>
+    </footer>
 </html>
