@@ -1,31 +1,17 @@
 <body>
   <main>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          <a class="navbar-brand">Ann's Website</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page">Resume</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link">Hobbies</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="">Other Cool Stuff</a>
-              </li>
-            </ul>
-            <span class="navbar-text">
-              Add if needed
-            </span>
-          </div>
-        </div>
-      </nav>
-      <div style="background-color: white; width: 100%; height: 100%;">
-        <div style="background-color: white; width: 50%; height: 100%; float:left;">
+    <nav>
+      <ul>
+        <li><strong>Ann's Webiste</strong></li>
+      </ul>
+      <ul>
+        <!-- <li><a href="home">Home</a></li> -->
+        <li><a href="resume">Resume</a></li>
+        <li><a href="hobbies">Hobbies</a></li>
+      </ul>
+    </nav>
+      <div style="width: 100%; height: 100%;">
+        <div style="width: 50%; height: 100%; float:left;">
           <aside>
             <div id="centered-aside">
               <h1 id="name">Hello, my name is Ann.</h1>
@@ -34,7 +20,7 @@
           </aside>
         </div>
 
-        <div style="background-color: white; width:50%; height: 100%; float:left;">
+        <div style="width:50%; height: 100%; float:left;">
           <section>
             <h1>Resume</h1>
             <article>
@@ -81,7 +67,6 @@
           </section>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384_geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     </main>
   </body>
 <footer>
