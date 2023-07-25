@@ -1,23 +1,11 @@
-#profile {
-  border-radius: 60%;
-  position: relative;
-  top: 70px;
-  height: 235px;
-  width: 250px;
+h2 {
+  text-align: center;
 }
 
-#aside{
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-#centered-aside {
-  /* height: 100%;
-  width: 50%;
-  position: fixed; */
-  margin: auto;
-  padding: 10px;
-  border: black;
+.flex-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 200px;
+  font-size: 1.2rem;
 }
