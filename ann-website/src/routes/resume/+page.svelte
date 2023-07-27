@@ -1,14 +1,5 @@
 <body>
   <main>
-    <nav>
-      <ul>
-        <li><strong>Ann's Webiste</strong></li>
-      </ul>
-      <ul>
-        <li><a href="resume">Resume</a></li>
-        <li><a href="hobbies">Hobbies</a></li>
-      </ul>
-    </nav>
     <section>
       <h1>Resume</h1>
       <article>
@@ -28,6 +19,11 @@
           </li>
         </ul>
         <h2>Experience</h2>
+        <h4>Sync.MD - Analytics Intern | June 2023 - Current</h4>
+        <ul>
+          <li>Mentoring a high school intern by creating a Python curriculum for the student to follow</li>
+          <li>Created a Python script using Python Data Analysis Library (pandas) that analyzes discrepancies between different csv files and outputs the discrepancies to an Excel file</li>
+        </ul>
         <h4>Foursquare – Software Engineering Intern | June 2022 – September 2022</h4>
         <ul>
           <li>Worked with the data platform team to improve data dumps</li>
@@ -55,10 +51,6 @@
     </section>
   </main>
 </body>
-<footer>
-  <p>© Ann Baturytski. All rights reserved. Other attributions cited in document or
-  page source</p>
-</footer>
 
 <style>
   h1 {
