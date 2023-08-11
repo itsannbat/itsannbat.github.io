@@ -8,12 +8,15 @@
   </ul>
 </nav>
 
-<slot />
+<body>
+  <slot />
 
-<footer>
-  <p>© Ann Baturytski. All rights reserved. Other attributions cited in document or
-  page source</p>
-</footer>
+
+  <footer>
+    <p>© Ann Baturytski. All rights reserved. Other attributions cited in document or
+    page source</p>
+  </footer>
+</body>
 
 <style>
   #nav-part {

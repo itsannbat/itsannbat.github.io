@@ -1,13 +1,8 @@
 <body>
   <main>
     <section>
-      <h1>Resume</h1>
+      <!-- <h1>Resume</h1> -->
       <article>
-        <h2>Skills</h2>
-        <ul>
-          <li> Programming Languages and Frameworks: Java, JavaScript, CSS, HTML, SQL, Python, C, C++ </li>
-          <li> Tools: Git/GitHub, AWS, Visual Studio Code, Slack, Microsoft Office, API’s </li>
-        </ul>
         <h2>Education</h2>
         <ul>
           <li>GPA: 3.6/4</li>
@@ -22,13 +17,13 @@
         <h4>Sync.MD - Analytics Intern | June 2023 - Current</h4>
         <ul>
           <li>Mentoring a high school intern by creating a Python curriculum for the student to follow</li>
-          <li>Created a Python script using Python Data Analysis Library (pandas) that analyzes discrepancies between different csv files and outputs the discrepancies to an Excel file</li>
+          <li>Built a Python script utilizing the Python Data Analysis Library (pandas) to identify discrepancies among various CSV files and generated detailed reports in Excel format</li>
+          <li>Developed a Python script that efficiently samples and truncates large CSV data files, saving 24% processing time while producing the desired sample size </li>
         </ul>
         <h4>Foursquare – Software Engineering Intern | June 2022 – September 2022</h4>
         <ul>
-          <li>Worked with the data platform team to improve data dumps</li>
-          <li>Created an automated backup pipeline that saves 10-15 on call hours</li>
-          <li>Wrote from scratch a directed acyclic graph using Apache Airflow Operators that copies data from MongoDB to AWS S3 buckets that is used to optimize the data flow</li>
+          <li>Collaborated with the data platform team and implemented an automated backup pipeline, saving 10-15 on call hours</li>
+          <li>Developed a directed acyclic graph using Apache Airflow Operators that copies data from MongoDB to AWS S3 buckets that is used to optimize the data flow</li>
           <li>Created a database table on AWS Athena that queries through CloudWatch logs to retrieve information about S3 objects</li>
         </ul>
         <h4>University of Washington Robinson Center – Teaching Assistant | June 2021 – January 2022</h4>
@@ -47,6 +42,11 @@
         <li>A full stack app that pairs hikers by their difficulty, whether they can carpool, which hikes they prefer, and by the number of hikers per hike. The app is written with React Native and Expo Go, and the backend uses Google Firebase.</li>
         <h4>Teaching Assistant Helper | October 2021</h4>
         <li>A machine learning bot written with Microsoft Azure hosted on a local host website that was written in JS that assists UW students by answering basic questions such as how many credits are required to graduate.</li>
+        <h2>Skills</h2>
+        <ul>
+          <li> Programming Languages and Frameworks: Java, JavaScript, CSS, HTML, SQL, Python, C, C++ </li>
+          <li> Tools: Git/GitHub, AWS, Visual Studio Code, Slack, Microsoft Office, API’s </li>
+        </ul>
       </article>
     </section>
   </main>
