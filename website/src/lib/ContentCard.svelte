@@ -1,4 +1,4 @@
-<script>
+<script type>
   export let img = "";
   export let name = "";
   export let quotes = [];
