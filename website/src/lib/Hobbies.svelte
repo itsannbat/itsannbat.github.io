@@ -2,16 +2,16 @@
   import { createAccordion, melt } from '@melt-ui/svelte';
   import { writable } from 'svelte/store';
   import { slide } from 'svelte/transition';
-  import ContentCard from './ContentCard.svelte';
+	import HobbieCard from './HobbieCard.svelte';
 
   const externalValue = writable('item-1');
 
   const {
     elements: { content, item, trigger, root },
     helpers: { isSelected },
-  } = createAccordion({ value: externalValue });
+  } = createAccordion({ multiple: true});
 
-  const contentCards = [
+  const hobbieCards = [
     {
       img: "blanca_lake.jpeg",
       name: "Blanca Lake",
@@ -55,10 +55,10 @@ const items = [
       id: 'item-1',
       title: 'Blanca Lake',
       description: {
-        component: ContentCard,
-        img: contentCards[0].img,
-        name: contentCards[0].name,
-        quotes: contentCards[0].quotes
+        component: HobbieCard,
+        img: hobbieCards[0].img,
+        name: hobbieCards[0].name,
+        quotes: hobbieCards[0].quotes
       },
       disabled: false,
     },
@@ -66,10 +66,10 @@ const items = [
       id: 'item-2',
       title: 'Camp Muir',
       description: {
-        component: ContentCard,
-        img: contentCards[1].img,
-        name: contentCards[1].name,
-        quotes: contentCards[1].quotes
+        component: HobbieCard,
+        img: hobbieCards[1].img,
+        name: hobbieCards[1].name,
+        quotes: hobbieCards[1].quotes
       },
       disabled: false,
     },
@@ -77,10 +77,10 @@ const items = [
       id: 'item-3',
       title: 'Cherry Creek Falls Trail',
       description: {
-        component: ContentCard,
-        img: contentCards[2].img,
-        name: contentCards[2].name,
-        quotes: contentCards[2].quotes
+        component: HobbieCard,
+        img: hobbieCards[2].img,
+        name: hobbieCards[2].name,
+        quotes: hobbieCards[2].quotes
       },
       disabled: false,
     },
@@ -88,16 +88,17 @@ const items = [
       id: 'item-4',
       title: 'Colchuck Lake',
       description: {
-        component: ContentCard,
-        img: contentCards[3].img,
-        name: contentCards[3].name,
-        quotes: contentCards[3].quotes
+        component: HobbieCard,
+        img: hobbieCards[3].img,
+        name: hobbieCards[3].name,
+        quotes: hobbieCards[3].quotes
       },
       disabled: false,
     },
   ];
 </script>
 
+<h2 class="text-center text-lg font-semibold text-gray-800">Here's a list of my favorite hikes in Washington!</h2>
 <div
   class="mx-auto w-[18rem] max-w-full rounded-md shadow-lg sm:w-[50rem]"
   {...$root}
@@ -112,10 +113,10 @@ const items = [
       <h2 class="flex">
         <button
           use:melt={$trigger(id)}
-          class="flex h-12 flex-1 cursor-pointer items-center justify-between border-b border-b-magnum-700
-                 bg-grey px-5 text-base font-medium
-                 leading-none text-magnum-700 transition-colors hover:bg-opacity-95 focus:!ring-0
-                 {i === items.length - 1 ? 'border-b-0' : ''}"
+          class="flex h-12 flex-1 cursor-pointer items-center justify-between border-b border-b-gray-300
+                bg-white px-5 text-base font-medium
+                leading-none text-black transition-colors hover:bg-gray-200 focus:!ring-0
+                {i === items.length - 1 ? 'border-b-0' : ''}"
         >
           {title}
         </button>
