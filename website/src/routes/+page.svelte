@@ -2,6 +2,8 @@
 	import About from "$lib/About.svelte";
 	import Hobbies from "$lib/Hobbies.svelte";
 	import { onMount } from "svelte";
+  import { quintOut } from 'svelte/easing';
+  import { slide } from 'svelte/transition';
 
   let text = "";
   let currentIndex = 0;
@@ -22,6 +24,9 @@
     return () => clearInterval(interval);
   });
 </script>
-	
+
+<div transition:slide={{ delay: 250, duration: 300, easing: quintOut, axis: 'x' }} class="min-h-screen flex items-center justify-center">
+  <div id="typewriter" class="font-bold text-center text-xl">{text}</div>
+</div>
 <About/>
 <Hobbies/>
