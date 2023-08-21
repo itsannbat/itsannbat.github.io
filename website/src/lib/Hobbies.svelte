@@ -108,35 +108,34 @@ const items = [
   <!-- Accordion (centered and wide) -->
   <div class="w-2/3 text-left">
     <div class="mx-auto w-[18rem] max-w-full rounded-md shadow-lg sm:w-[50rem]">
-      {#each items as { id, title, description }, i}
-        <div
-          use:melt={$item(id)}
-          class="overflow-hidden transition-colors first:rounded-t
-                last:rounded-b focus-within:relative focus-within:z-10 focus-within:ring
-                focus-within:ring-magnum-400"
-        >
-          <h2 class="flex">
-            <button
-              use:melt={$trigger(id)}
-              class="flex h-12 flex-1 cursor-pointer items-center justify-between border-b border-b-gray-300
-                bg-white px-5 text-base font-medium
-                leading-none text-black transition-colors hover:bg-gray-200 focus:!ring-0
-                {i === items.length - 1 ? 'border-b-0' : ''}"
+  {#each items as { id, title, description }, i}
+    <div
+      use:melt={$item(id)}
+      class="overflow-hidden transition-colors first:rounded-t-xl
+            last:rounded-b-xl"
+    >
+      <h2 class="flex">
+        <button
+          use:melt={$trigger(id)}
+          class="flex h-12 flex-1 cursor-pointer items-center justify-between border-b border-b-gray-300
+            bg-white px-5 text-base font-medium
+            leading-none text-black transition-colors hover:bg-gray-200 focus:!ring-0
+            {i === items.length - 1 ? 'border-b-0' : ''}"
             >
-              {title}
-            </button>
-          </h2>
-          {#if $isSelected(id)}
-            <div
-              class="overflow-hidden bg-neutral-100 text-sm text-neutral-900"
-              use:melt={$content(id)}
-              transition:slide
-            >
-              <svelte:component this={description.component} {...description} />
-            </div>
-          {/if}
-        </div>
-      {/each}
+          {title}
+        </button>
+      </h2>
+      {#if $isSelected(id)}
+      <div
+        class="overflow-hidden bg-neutral-100 text-sm text-neutral-900"
+        use:melt={$content(id)}
+        transition:slide
+      >
+        <svelte:component this={description.component} {...description} />
+      </div>
+        {/if}
+      </div>
+     {/each}
     </div>
   </div>
 </div>
