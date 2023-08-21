@@ -2,7 +2,7 @@
   <div class="flex items-center">
     <img src="ann.jpg" alt="Picture of Ann" class="h-1/3 w-1/4 rounded-full mr-4">
     <div>
-      <h2 class="text-lg font-semibold text-gray-800">Hi, I'm Ann</h2>
+      <h2 class="text-lg font-semibold text-gray-800">Hi, I'm Ann!</h2>
       <p class="text-sm text-gray-600">I am a current rising senior at the UW Paul Allen School. I'm interested in all</p>
       <p class="text-sm text-gray-600">things CS, but mostly have worked with the backend and a bit of front end.</p>
       <br>

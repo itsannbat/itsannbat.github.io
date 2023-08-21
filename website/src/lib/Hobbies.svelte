@@ -9,7 +9,7 @@
   const {
     elements: { content, item, trigger, root },
     helpers: { isSelected },
-  } = createAccordion({ multiple: true});
+  } = createAccordion({});
 
   const hobbieCards = [
     {
@@ -98,38 +98,45 @@ const items = [
   ];
 </script>
 
-<h2 class="text-center text-lg font-semibold text-gray-800">Here's a list of my favorite hikes in Washington!</h2>
-<div
-  class="mx-auto w-[18rem] max-w-full rounded-md shadow-lg sm:w-[50rem]"
-  {...$root}
->
-  {#each items as {id, title, description}, i}
-    <div
-      use:melt={$item(id)}
-      class="overflow-hidden transition-colors first:rounded-t
-            last:rounded-b focus-within:relative focus-within:z-10 focus-within:ring
-            focus-within:ring-magnum-400"
-    >
-      <h2 class="flex">
-        <button
-          use:melt={$trigger(id)}
-          class="flex h-12 flex-1 cursor-pointer items-center justify-between border-b border-b-gray-300
+<div class="min-h-screen flex flex-col items-center justify-center">
+  <!-- "Explore My Hobbies" section (centered and wide) -->
+  <div class="w-2/3 text-left mb-8">
+    <h1 class="text-2xl font-bold">Explore My Hobbies</h1>
+    <p class="mt-4">Welcome to my hobbies corner! Here, I'll be sharing some of my favorite pastimes and interests. I've added a list of my favorite hikes, so feel free to check them out! When I'm not hiking, I enjoy reading, paddle boarding and video games. Some of my favorite video games have got to be Halo 5, Oblivion, and Assassins Creed. Additionally, if you use GoodReads, feel free to add me <a href="https://www.goodreads.com/user/show/107066100-ann-baturytski" class="text-blue-500 hover:underline">here</a></p>
+  </div>
+
+  <!-- Accordion (centered and wide) -->
+  <div class="w-2/3 text-left">
+    <div class="mx-auto w-[18rem] max-w-full rounded-md shadow-lg sm:w-[50rem]">
+      {#each items as { id, title, description }, i}
+        <div
+          use:melt={$item(id)}
+          class="overflow-hidden transition-colors first:rounded-t
+                last:rounded-b focus-within:relative focus-within:z-10 focus-within:ring
+                focus-within:ring-magnum-400"
+        >
+          <h2 class="flex">
+            <button
+              use:melt={$trigger(id)}
+              class="flex h-12 flex-1 cursor-pointer items-center justify-between border-b border-b-gray-300
                 bg-white px-5 text-base font-medium
                 leading-none text-black transition-colors hover:bg-gray-200 focus:!ring-0
                 {i === items.length - 1 ? 'border-b-0' : ''}"
-        >
-          {title}
-        </button>
-      </h2>
-      {#if $isSelected(id)}
-        <div
-          class="overflow-hidden bg-neutral-100 text-sm text-neutral-900"
-          use:melt={$content(id)}
-          transition:slide
-        >
-          <svelte:component this={description.component} {...description} />
+            >
+              {title}
+            </button>
+          </h2>
+          {#if $isSelected(id)}
+            <div
+              class="overflow-hidden bg-neutral-100 text-sm text-neutral-900"
+              use:melt={$content(id)}
+              transition:slide
+            >
+              <svelte:component this={description.component} {...description} />
+            </div>
+          {/if}
         </div>
-      {/if}
+      {/each}
     </div>
-  {/each}
+  </div>
 </div>

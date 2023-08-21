@@ -6,7 +6,7 @@
   <div class="hidden lg:flex lg:gap-x-12 lg:center">
     <a href="#home" class="text-sm font-semibold leading-6 text-gray-900">Home</a>
     <a href="#about" class="text-sm font-semibold leading-6 text-gray-900">About</a>
-    <a href="#resume" class="text-sm font-semibold leading-6 text-gray-900">Resume</a>
+    <!-- <a href="#resume" class="text-sm font-semibold leading-6 text-gray-900">Projects</a> -->
     <a href="#hobbies" class="text-sm font-semibold leading-6 text-gray-900">Hobbies</a>
     <a href="#contact" class="text-sm font-semibold leading-6 text-gray-900">Contact</a>
   </div>
