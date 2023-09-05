@@ -4,8 +4,6 @@
   import { slide } from 'svelte/transition';
 	import HobbieCard from './HobbieCard.svelte';
 
-  const externalValue = writable('item-1');
-
   const {
     elements: { content, item, trigger, root },
     helpers: { isSelected },

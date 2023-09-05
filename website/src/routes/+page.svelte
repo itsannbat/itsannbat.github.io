@@ -1,6 +1,7 @@
 <script>
 	import About from "$lib/About.svelte";
 	import Hobbies from "$lib/Hobbies.svelte";
+  import Contact from "$lib/Contact.svelte";
 	import { onMount } from "svelte";
   import { quintOut } from 'svelte/easing';
   import { slide } from 'svelte/transition';
@@ -30,3 +31,4 @@
 </div>
 <About/>
 <Hobbies/>
+<Contact/>
