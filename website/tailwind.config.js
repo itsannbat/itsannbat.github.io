@@ -1,6 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 import plugin from 'tailwindcss/plugin';
 import typography from '@tailwindcss/typography';
+import aspectRatio from '@tailwindcss/aspect-ratio';
+
 
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
@@ -72,6 +74,7 @@ export default {
 
   plugins: [
     typography,
+    aspectRatio,
     plugin(function ({ addVariant, matchUtilities, theme }) {
       addVariant('hocus', ['&:hover', '&:focus']);
       // Square utility

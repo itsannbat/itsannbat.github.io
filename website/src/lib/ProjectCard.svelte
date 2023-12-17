@@ -6,10 +6,9 @@
 
 <!-- Project Card -->
 <div class="border border-gray-300 shadow-md rounded-lg p-4">
-  <img src={imageSrc} alt={title} class="w-full h-auto rounded-lg mb-2" />
+  <div class="aspect-w-16 aspect-h-9 w-full overflow-hidden rounded-lg mb-2">
+    <img src={imageSrc} alt={title} class="object-cover w-full h-full" />
+  </div>
   <h2 class="text-xl font-semibold">{title}</h2>
 </div>
 
-<style>
-  /* Add any custom styles for your project card here */
-</style>

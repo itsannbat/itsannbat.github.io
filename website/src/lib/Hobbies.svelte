@@ -3,6 +3,8 @@
   import { writable } from 'svelte/store';
   import { slide } from 'svelte/transition';
 	import HobbieCard from './HobbieCard.svelte';
+  import { quintOut } from 'svelte/easing';
+
 
   const {
     elements: { content, item, trigger, root },
@@ -96,7 +98,7 @@ const items = [
   ];
 </script>
 
-<div class="min-h-screen flex flex-col items-center justify-center">
+<div class="flex flex-col items-center justify-center">
   <!-- "Explore My Hobbies" section (centered and wide) -->
   <div class="w-2/3 text-left mb-8">
     <h1 class="text-2xl font-bold">Explore My Hobbies</h1>
@@ -127,7 +129,7 @@ const items = [
       <div
         class="overflow-hidden bg-neutral-100 text-sm text-neutral-900"
         use:melt={$content(id)}
-        transition:slide
+        transition:slide={{duration: 500}}
       >
         <svelte:component this={description.component} {...description} />
       </div>
