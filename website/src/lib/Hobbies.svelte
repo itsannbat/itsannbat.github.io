@@ -107,7 +107,7 @@ const items = [
 
   <!-- Accordion (centered and wide) -->
   <div class="w-2/3 text-left">
-    <div class="mx-auto w-[18rem] max-w-full rounded-md shadow-lg sm:w-[50rem]">
+    <div class="mx-auto w-[40rem] max-w-full rounded-md shadow-lg">
   {#each items as { id, title, description }, i}
     <div
       use:melt={$item(id)}
