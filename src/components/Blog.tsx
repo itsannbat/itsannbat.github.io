@@ -11,25 +11,11 @@ interface Post {
 
 const posts: Post[] = [
   {
-    slug: 'idempotency-keys',
-    date: '2026-05-02',
-    title: 'Idempotency keys are a love letter to your future self',
+    slug: 'building-truely',
+    date: '2026-06-10',
+    title: 'Building a real-time fact-checker with multi-agent AI',
     excerpt:
-      'Retries are inevitable. Here is how a small key turns terrifying duplicate writes into a non-event, and the edge cases nobody warns you about.',
-  },
-  {
-    slug: 'reading-flamegraphs',
-    date: '2026-03-18',
-    title: 'Learning to actually read a flamegraph',
-    excerpt:
-      'Profilers give you a wall of color. After staring at enough of them, a few simple shapes started telling me exactly where the time was going.',
-  },
-  {
-    slug: 'boring-code',
-    date: '2026-01-27',
-    title: 'In praise of boring code',
-    excerpt:
-      'The clever one-liner felt great to write and awful to debug six months later. A short argument for choosing the obvious solution on purpose.',
+      'How we built Truely: orchestrating a fleet of AI agents inside a Chrome extension, parsing messy DOM trees at page-load speed, and keeping the UX out of the way while the browser quietly checks whether what you\'re reading is true.',
   },
 ];
 

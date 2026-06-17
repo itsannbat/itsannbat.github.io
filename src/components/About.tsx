@@ -3,12 +3,14 @@ import SectionWrapper from './SectionWrapper';
 const skills = [
   'TypeScript',
   'React',
-  'Node.js',
-  'Go',
+  'Svelte',
   'Python',
-  'PostgreSQL',
+  'Chrome Extensions',
+  'AI Agents',
+  'Anthropic Claude',
+  'TailwindCSS',
+  'Vite / WXT',
   'Distributed Systems',
-  'Cloud Infra',
 ];
 
 export default function About() {
@@ -18,28 +20,30 @@ export default function About() {
       <h2 className="mb-12 text-3xl font-bold sm:text-4xl">A little about me</h2>
 
       <div className="grid grid-cols-1 gap-10 md:grid-cols-[280px_1fr] md:gap-14">
-        <div className="flex aspect-square w-full items-center justify-center rounded-2xl border border-border bg-surface md:max-w-[280px]">
-          <span className="font-mono text-sm text-muted">Photo</span>
-        </div>
+        <img
+          src="/ann.png"
+          alt="Ann B."
+          className="aspect-square w-full rounded-2xl object-cover object-top md:max-w-[280px]"
+        />
 
         <div>
           <div className="space-y-5 text-lg leading-relaxed text-text/90">
             <p>
-              I&apos;m a software engineer who enjoys the space where clean
-              abstractions meet messy real-world systems. Most of my time goes
-              into building reliable backends, thoughtful APIs, and the
-              occasional front-end that doesn&apos;t fight the user.
+              I&apos;m a software engineer who gets excited about building things that
+              actually matter. Lately that means AI-powered browser tooling, multi-agent
+              systems, and the unglamorous-but-crucial work of making the internet a
+              slightly more honest place.
             </p>
             <p>
-              Lately I&apos;ve been deep in distributed systems &mdash; chasing
-              down race conditions, tuning queues, and learning to love
-              observability. I care about code that is boring in the best way:
-              predictable, testable, and easy for the next person to read.
+              I care about the full stack &mdash; from architecting background service
+              workers and DOM-parsing pipelines to designing interfaces that stay out of
+              the user&apos;s way. Clean abstractions, careful API design, and code that
+              the next person can read without a decoder ring.
             </p>
             <p>
-              When I step away from the keyboard, I&apos;m usually writing about
-              what I&apos;ve learned or wandering somewhere with a camera,
-              trying to frame the ordinary in a way that feels new.
+              When I step away from the keyboard I&apos;m usually writing about what
+              I&apos;ve learned, or somewhere outside with a camera, trying to frame the
+              ordinary in a way that feels new.
             </p>
           </div>
 

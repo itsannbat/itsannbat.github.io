@@ -3,7 +3,7 @@ import { GitHubIcon, LinkedInIcon, MailIcon } from './icons';
 
 const socials = [
   { href: 'https://github.com/itsannbat', label: 'GitHub', Icon: GitHubIcon },
-  { href: 'https://www.linkedin.com/', label: 'LinkedIn', Icon: LinkedInIcon },
+  { href: 'https://www.linkedin.com/in/annbat/', label: 'LinkedIn', Icon: LinkedInIcon },
   { href: 'mailto:ab@pechuk.com', label: 'Email', Icon: MailIcon },
 ];
 
