@@ -1,0 +1,1886 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Step challenge leaderboard for the dbt Labs + Fivetran event.">
+<title>Step Challenge — dbt Labs + Fivetran</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%91%9F</text></svg>">
+
+<script>
+  /* apply the saved theme before first paint so there's no flash */
+  try {
+    var t = localStorage.getItem("dbtft-theme");
+    if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+
+<style>
+  /* minimal reset */
+  html { -webkit-text-size-adjust: 100%; }
+  body, h1, h2, h3, p, figure, blockquote, dl, dd { margin: 0; }
+  img, svg, video, canvas { display: block; max-width: 100%; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  table { border-collapse: collapse; }
+
+  /* ─── tokens ─────────────────────────────────────────────── */
+  :root {
+    --dbt: #FF694A;
+    --dbt-deep: #D84C2F;
+    --ftran: #1E88FF;
+    --ftran-deep: #0B62CC;
+    --mid: #A874C8;
+
+    --gold: #D9A82C;
+    --gold-ink: #4A3608;
+    --silver: #9AA3B2;
+    --silver-ink: #232934;
+    --bronze: #B5713D;
+    --bronze-ink: #3D2210;
+
+    --ground: #F7F8FB;
+    --surface: #FFFFFF;
+    --surface-2: #F1F3F8;
+    --line: #E1E5EF;
+    --line-strong: #CBD2E2;
+
+    --text: #12141F;
+    --text-2: #4B5169;
+    --muted: #6B7290;
+
+    --up: #16915B;
+    --down: #CF3F38;
+    --warn: #9A6B10;
+
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --r: 6px;
+    --shadow: 0 1px 2px rgba(16, 19, 32, .06), 0 8px 24px -16px rgba(16, 19, 32, .18);
+    --ring: 0 0 0 2px var(--ground), 0 0 0 4px var(--ftran);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --dbt: #FF7A5C; --dbt-deep: #FF694A; --ftran: #4C9EFF; --ftran-deep: #1E88FF; --mid: #B98BD8;
+      --gold: #E8BC4A; --gold-ink: #3A2A05; --silver: #B9C2D1; --silver-ink: #1A1F29; --bronze: #CE8B52; --bronze-ink: #2E1908;
+      --ground: #0D1019; --surface: #161A28; --surface-2: #1E2334; --line: #262C40; --line-strong: #38405A;
+      --text: #EEF0F7; --text-2: #AEB5CC; --muted: #7E86A3;
+      --up: #3ECB84; --down: #FF6B63; --warn: #E0B457;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 32px -20px rgba(0, 0, 0, .8);
+    }
+  }
+
+  :root[data-theme="light"] {
+    --dbt: #FF694A; --dbt-deep: #D84C2F; --ftran: #1E88FF; --ftran-deep: #0B62CC; --mid: #A874C8;
+    --gold: #D9A82C; --gold-ink: #4A3608; --silver: #9AA3B2; --silver-ink: #232934; --bronze: #B5713D; --bronze-ink: #3D2210;
+    --ground: #F7F8FB; --surface: #FFFFFF; --surface-2: #F1F3F8; --line: #E1E5EF; --line-strong: #CBD2E2;
+    --text: #12141F; --text-2: #4B5169; --muted: #6B7290;
+    --up: #16915B; --down: #CF3F38; --warn: #9A6B10;
+    --shadow: 0 1px 2px rgba(16, 19, 32, .06), 0 8px 24px -16px rgba(16, 19, 32, .18);
+  }
+
+  :root[data-theme="dark"] {
+    --dbt: #FF7A5C; --dbt-deep: #FF694A; --ftran: #4C9EFF; --ftran-deep: #1E88FF; --mid: #B98BD8;
+    --gold: #E8BC4A; --gold-ink: #3A2A05; --silver: #B9C2D1; --silver-ink: #1A1F29; --bronze: #CE8B52; --bronze-ink: #2E1908;
+    --ground: #0D1019; --surface: #161A28; --surface-2: #1E2334; --line: #262C40; --line-strong: #38405A;
+    --text: #EEF0F7; --text-2: #AEB5CC; --muted: #7E86A3;
+    --up: #3ECB84; --down: #FF6B63; --warn: #E0B457;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 32px -20px rgba(0, 0, 0, .8);
+  }
+
+  /* ─── base ───────────────────────────────────────────────── */
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { max-width: 1180px; margin: 0 auto; padding: 22px 20px 64px; display: flex; flex-direction: column; gap: 22px; }
+  .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+  }
+
+  :focus-visible { outline: none; box-shadow: var(--ring); border-radius: 3px; }
+  [hidden] { display: none !important; }
+
+  /* ─── top bar ────────────────────────────────────────────── */
+  .topbar {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding-bottom: 18px; border-bottom: 1px solid var(--line);
+  }
+
+  .lockup { display: flex; align-items: center; gap: 11px; margin-right: auto; }
+  .mark { flex: none; }
+  .lockup-text { display: flex; flex-direction: column; gap: 1px; }
+
+  .wordmark { font-family: var(--mono); font-size: 17px; font-weight: 700; letter-spacing: -.045em; line-height: 1.1; }
+  .wordmark .plus { color: var(--mid); font-weight: 400; padding: 0 3px; }
+  .wordmark .o { color: var(--dbt-deep); }
+  .wordmark .b { color: var(--ftran-deep); }
+
+  .sub { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+  .status {
+    display: flex; align-items: center; gap: 7px;
+    font-family: var(--mono); font-size: 11.5px; color: var(--text-2);
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 999px; padding: 5px 12px 5px 9px;
+  }
+
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--up); box-shadow: 0 0 0 3px color-mix(in srgb, var(--up) 22%, transparent); }
+  .dot.stale { background: var(--warn); box-shadow: 0 0 0 3px color-mix(in srgb, var(--warn) 22%, transparent); }
+  .dot.off { background: var(--muted); box-shadow: 0 0 0 3px color-mix(in srgb, var(--muted) 22%, transparent); }
+
+  .acct { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  .btn {
+    font-family: var(--mono); font-size: 11.5px; font-weight: 600; letter-spacing: .04em;
+    background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r);
+    padding: 7px 13px; cursor: pointer;
+    transition: background .14s, border-color .14s, transform .14s;
+  }
+
+  .btn:hover { background: var(--surface-2); border-color: var(--muted); }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  .btn-primary { color: #fff; background: linear-gradient(100deg, var(--dbt-deep), #E2582F 55%, var(--dbt-deep)); border-color: transparent; }
+  .btn-primary:hover { background: var(--dbt-deep); border-color: transparent; filter: brightness(1.06); }
+  .iconbtn { padding: 7px 10px; line-height: 1; font-size: 13px; }
+
+  /* ─── sign-in gate ───────────────────────────────────────── */
+  .gate { min-height: 78vh; display: grid; place-items: center; padding: 20px; }
+
+  .gate-card {
+    width: 100%; max-width: 400px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 12px; padding: 26px 24px;
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 16px;
+  }
+
+  .gate-head { display: flex; flex-direction: column; gap: 6px; }
+  .gate-title { font-family: var(--mono); font-size: 19px; font-weight: 700; letter-spacing: -.04em; }
+  .gate-body { font-size: 14px; color: var(--text-2); line-height: 1.55; }
+  .gate-body code { font-family: var(--mono); font-size: 12.5px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; }
+  .gate-body ol { margin: 10px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+
+  /* ─── hero ───────────────────────────────────────────────── */
+  .hero { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); display: grid; grid-template-columns: minmax(280px, 380px) 1fr; }
+  .hero-left { padding: 20px 22px 22px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 16px; }
+  .hero-total { display: flex; flex-direction: column; gap: 3px; }
+
+  .hero-val {
+    font-family: var(--mono); font-size: clamp(38px, 7vw, 58px);
+    font-weight: 700; letter-spacing: -.055em; line-height: .95;
+    background: linear-gradient(96deg, var(--dbt-deep), var(--dbt) 26%, var(--mid) 56%, var(--ftran) 82%, var(--ftran-deep));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+
+  .hero-dist { font-family: var(--mono); font-size: 12.5px; color: var(--text-2); }
+  .hero-dist b { color: var(--text); font-weight: 700; }
+
+  .hero-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .metric { background: var(--surface); padding: 11px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .metric-val { font-family: var(--mono); font-size: 17px; font-weight: 700; letter-spacing: -.035em; line-height: 1.2; }
+  .metric-lbl { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .metric-note { font-family: var(--mono); font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .hero-right { padding: 20px 22px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .hero-right-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .hero-right-head .eyebrow { margin-right: auto; }
+
+  .legend { display: flex; gap: 14px; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { width: 14px; height: 0; border-top: 2px solid var(--mid); display: inline-block; }
+  .legend i.dash { border-top-style: dashed; border-color: var(--line-strong); }
+
+  .chart { width: 100%; height: auto; overflow: visible; }
+
+  /* ─── podium ─────────────────────────────────────────────── */
+  .podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: end; }
+
+  .pod {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 15px 0; display: flex; flex-direction: column; gap: 10px;
+    box-shadow: var(--shadow); position: relative; overflow: hidden;
+  }
+
+  .pod::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; }
+  .pod.p1::before { background: var(--gold); }
+  .pod.p2::before { background: var(--silver); }
+  .pod.p3::before { background: var(--bronze); }
+  .pod.p1 { order: 2; }
+  .pod.p2 { order: 1; }
+  .pod.p3 { order: 3; }
+
+  .pod-top { display: flex; align-items: center; gap: 10px; }
+
+  .medal { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: -.02em; }
+  .medal.g { background: var(--gold); color: var(--gold-ink); }
+  .medal.s { background: var(--silver); color: var(--silver-ink); }
+  .medal.b { background: var(--bronze); color: var(--bronze-ink); }
+
+  .pod-place { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .pod.p1 .pod-place { color: var(--gold); }
+  .pod.p2 .pod-place { color: var(--silver); }
+  .pod.p3 .pod-place { color: var(--bronze); }
+
+  .pod-who { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .av-ring { flex: none; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); padding: 2px; display: grid; }
+  .av-ring.g { background: var(--gold); }
+  .av-ring.s { background: var(--silver); }
+  .av-ring.b { background: var(--bronze); }
+
+  .pod-name { font-weight: 600; font-size: 15px; line-height: 1.25; letter-spacing: -.01em; min-width: 0; overflow-wrap: break-word; }
+  .pod-total { font-family: var(--mono); font-size: 24px; font-weight: 700; letter-spacing: -.045em; line-height: 1; }
+  .pod-meta { font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+
+  .pod-plinth { margin: 4px -15px 0; }
+  .pod.p1 .pod-plinth { height: 26px; background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 26%, transparent), transparent); }
+  .pod.p2 .pod-plinth { height: 15px; background: linear-gradient(180deg, color-mix(in srgb, var(--silver) 24%, transparent), transparent); }
+  .pod.p3 .pod-plinth { height: 8px; background: linear-gradient(180deg, color-mix(in srgb, var(--bronze) 24%, transparent), transparent); }
+
+  /* ─── tiles ──────────────────────────────────────────────── */
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 15px 16px 14px; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .tile-val { font-family: var(--mono); font-size: 25px; font-weight: 700; letter-spacing: -.04em; line-height: 1.1; }
+  .tile-note { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  /* ─── columns ────────────────────────────────────────────── */
+  .cols { display: grid; grid-template-columns: 322px 1fr; gap: 20px; align-items: start; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); overflow: hidden; }
+
+  .panel-head { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--line); background: var(--surface-2); flex-wrap: wrap; }
+  .panel-head .eyebrow { margin-right: auto; }
+  .panel-head .count { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .panel-head .filter { width: 150px; font-size: 12.5px; padding: 6px 10px; background: var(--surface); }
+  .panel-head .filter::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+  tbody tr.hit { animation: hit 1.6s ease-out; }
+  @keyframes hit {
+    0%, 100% { background: transparent; }
+    18% { background: color-mix(in srgb, var(--ftran) 22%, transparent); }
+  }
+  .panel-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ─── form ───────────────────────────────────────────────── */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field > label, .field > .eyebrow { font-family: var(--mono); font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+  .input, select.input {
+    font-family: var(--mono); font-size: 14px; color: var(--text);
+    background: var(--ground); border: 1px solid var(--line-strong);
+    border-radius: var(--r); padding: 9px 11px; width: 100%;
+    transition: border-color .14s; -webkit-appearance: none; appearance: none;
+  }
+
+  select.input {
+    background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position: calc(100% - 17px) 51%, calc(100% - 12px) 51%;
+    background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 30px;
+  }
+
+  .input:hover { border-color: var(--muted); }
+  .input:focus { border-color: var(--ftran); }
+  .input:disabled { opacity: .55; cursor: not-allowed; }
+  .input.big { font-size: 24px; font-weight: 700; letter-spacing: -.03em; padding: 11px; }
+
+  .row { display: flex; gap: 10px; }
+  .row > * { flex: 1; min-width: 0; }
+
+  .hint { font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .hint.warn { color: var(--warn); }
+
+  .who { display: flex; align-items: center; gap: 11px; padding: 11px 12px; background: var(--ground); border: 1px solid var(--line); border-radius: var(--r); }
+  .who-name { font-weight: 600; font-size: 14.5px; line-height: 1.2; }
+  .who-meta { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  .linkbtn { font-family: var(--mono); font-size: 11px; color: var(--muted); background: none; border: 0; padding: 4px; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+  .linkbtn:hover { color: var(--text); }
+
+  /* ─── avatar ─────────────────────────────────────────────── */
+  .av {
+    width: 32px; height: 36px; flex: none; display: grid; place-items: center;
+    font-family: var(--mono); font-size: 11.5px; font-weight: 700; letter-spacing: -.02em;
+    color: var(--text-2); background: var(--surface-2);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+
+  .av.sm { width: 25px; height: 28px; font-size: 9.5px; }
+  .av.mine { color: #fff; background: linear-gradient(150deg, var(--dbt), var(--dbt-deep)); }
+
+  /* ─── week strip ─────────────────────────────────────────── */
+  .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .day { display: flex; flex-direction: column; align-items: center; gap: 5px; background: none; border: 0; padding: 0; cursor: pointer; font-family: var(--mono); }
+  .day-lbl { font-size: 9.5px; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+
+  .day-box {
+    width: 100%; height: 34px; border-radius: 4px;
+    background: var(--surface-2); border: 1px solid var(--line);
+    display: grid; place-items: center; font-size: 10px; font-weight: 600; color: var(--muted);
+    transition: border-color .14s, transform .14s;
+  }
+
+  .day:hover .day-box { border-color: var(--ftran); transform: translateY(-2px); }
+  .day:focus-visible .day-box { box-shadow: var(--ring); }
+  .day.has .day-box { color: #fff; border-color: transparent; background: linear-gradient(160deg, var(--dbt), var(--dbt-deep)); }
+  .day.off .day-box { opacity: .4; }
+  .day.today .day-lbl { color: var(--text); font-weight: 700; }
+
+  /* ─── leaderboard ────────────────────────────────────────── */
+  .addbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 16px; background: var(--ground); border-bottom: 1px solid var(--line); }
+  .addbar .input { flex: 1 1 170px; width: auto; font-size: 13.5px; padding: 8px 10px; }
+
+  .board-scroll { overflow-x: auto; }
+  table { width: 100%; min-width: 620px; }
+
+  thead th {
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+    text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line);
+    white-space: nowrap; background: var(--surface);
+  }
+
+  thead th.n { text-align: right; }
+  thead th.rank { width: 56px; }
+  thead th.sortable { cursor: pointer; user-select: none; }
+  thead th.sortable:hover { color: var(--text); }
+  thead th[aria-sort] { color: var(--text); }
+  thead th[aria-sort="descending"]::after { content: " ↓"; color: var(--dbt-deep); }
+  thead th[aria-sort="ascending"]::after { content: " ↑"; color: var(--dbt-deep); }
+
+  tbody td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr { transition: background .14s; }
+  tbody tr:hover { background: var(--surface-2); }
+  tbody tr.me { background: color-mix(in srgb, var(--dbt) 7%, transparent); }
+  tbody tr.me:hover { background: color-mix(in srgb, var(--dbt) 11%, transparent); }
+  tbody tr.me td:first-child { box-shadow: inset 3px 0 0 var(--dbt); }
+
+  tbody td.rank { width: 56px; font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: -.03em; color: var(--muted); }
+
+  .who-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .who-cell .nm { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .who-cell .tm { font-family: var(--mono); font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+
+  .you-tag { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: .1em; color: var(--dbt-deep); border: 1px solid var(--dbt); border-radius: 3px; padding: 1px 4px; margin-left: 7px; vertical-align: 1px; }
+
+  td.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.total { font-size: 15.5px; font-weight: 700; letter-spacing: -.03em; }
+  td.sub { color: var(--text-2); font-size: 12.5px; }
+
+  .delta { display: inline-flex; align-items: center; gap: 3px; font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 3px; }
+  .delta.up { color: var(--up); background: color-mix(in srgb, var(--up) 13%, transparent); }
+  .delta.down { color: var(--down); background: color-mix(in srgb, var(--down) 13%, transparent); }
+  .delta.hold { color: var(--muted); background: var(--surface-2); }
+
+  /* the shared ramp: every bar is cut from one orange→blue spectrum */
+  .bar-cell { width: 190px; min-width: 150px; }
+  .track { position: relative; height: 9px; border-radius: 2px; background: var(--surface-2); }
+  .fill { position: relative; height: 100%; width: 0; border-radius: 2px; overflow: hidden; transition: width .95s cubic-bezier(.22, 1, .36, 1); }
+  .ramp { position: absolute; top: 0; left: 0; bottom: 0; width: calc(10000% / var(--p)); background: linear-gradient(90deg, var(--dbt-deep), var(--dbt) 22%, var(--mid) 52%, var(--ftran) 80%, var(--ftran-deep)); }
+  .pace { position: absolute; top: -4px; bottom: -4px; width: 1px; background: var(--line-strong); }
+  .pace::after { content: ""; position: absolute; top: -3px; left: -2px; width: 5px; height: 5px; border-radius: 50%; background: var(--line-strong); }
+
+  .spark { width: 88px; height: 26px; overflow: visible; }
+
+  .empty { padding: 44px 20px; text-align: center; }
+  .empty p { color: var(--muted); font-family: var(--mono); font-size: 12.5px; }
+
+  /* ─── organiser tools ────────────────────────────────────── */
+  details.tools { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  details.tools > summary { padding: 13px 16px; cursor: pointer; list-style: none; display: flex; align-items: center; gap: 9px; background: var(--surface-2); }
+  details.tools > summary::-webkit-details-marker { display: none; }
+  details.tools > summary::after { content: "+"; margin-left: auto; font-family: var(--mono); color: var(--muted); }
+  details.tools[open] > summary::after { content: "–"; }
+  details.tools > summary:hover .eyebrow { color: var(--text); }
+
+  .tools-body { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  textarea.input { resize: vertical; min-height: 76px; font-size: 12px; line-height: 1.5; }
+  .btnrow { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ─── toast ──────────────────────────────────────────────── */
+  .toast {
+    position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 14px);
+    background: var(--text); color: var(--ground);
+    font-family: var(--mono); font-size: 12.5px; padding: 10px 16px;
+    border-radius: var(--r); box-shadow: 0 14px 34px -12px rgba(0, 0, 0, .5);
+    opacity: 0; pointer-events: none; transition: opacity .22s, transform .22s;
+    z-index: 40; max-width: calc(100vw - 40px); text-align: center;
+  }
+
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+  .toast.bad { background: var(--down); color: #fff; }
+
+  footer { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: center; line-height: 1.7; }
+
+  /* ─── responsive ─────────────────────────────────────────── */
+  @media (max-width: 1040px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-left { border-right: 0; border-bottom: 1px solid var(--line); }
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+    .cols { grid-template-columns: 1fr; }
+    .spark-col, .spark-cell { display: none; }
+  }
+
+  @media (max-width: 720px) {
+    .podium { grid-template-columns: 1fr; align-items: stretch; }
+    .pod.p1, .pod.p2, .pod.p3 { order: 0; }
+    .pod-plinth { display: none; }
+    .pod { padding-bottom: 15px; }
+  }
+
+  @media (max-width: 620px) {
+    .shell { padding: 18px 14px 52px; }
+    .avg-col, .avg-cell { display: none; }
+    table { min-width: 470px; }
+    .bar-cell { width: 120px; min-width: 100px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 0s !important; animation-duration: 0s !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ sign-in gate (live mode only) ═══ -->
+<div class="gate" id="gate" hidden>
+  <div class="gate-card">
+    <div class="gate-head">
+      <svg class="mark" width="34" height="38" viewBox="0 0 34 38" aria-hidden="true">
+        <defs>
+          <linearGradient id="mkg" x1="0" y1="0" x2="1" y2="0.4">
+            <stop offset="0" stop-color="var(--dbt-deep)" /><stop offset=".45" stop-color="var(--dbt)" />
+            <stop offset=".62" stop-color="var(--mid)" /><stop offset="1" stop-color="var(--ftran-deep)" />
+          </linearGradient>
+        </defs>
+        <path d="M17 1 33 10v18L17 37 1 28V10z" fill="none" stroke="url(#mkg)" stroke-width="2" />
+        <path d="M13 13l5.5 6-5.5 6" fill="none" stroke="url(#mkg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M21 13l5.5 6-5.5 6" fill="none" stroke="url(#mkg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".45" />
+      </svg>
+      <div class="gate-title" id="gateTitle">Step Challenge</div>
+      <p class="gate-body" id="gateBody">Sign in with your work email to join the leaderboard.</p>
+    </div>
+    <div id="gateForm">
+      <div class="field">
+        <label for="gatePass">Event passcode</label>
+        <input class="input" id="gatePass" type="password" autocomplete="current-password" placeholder="••••••••">
+      </div>
+    </div>
+    <button class="btn btn-primary" id="gateBtn" type="button">Unlock the board</button>
+    <p class="hint" id="gateHint">Ask the organizer for the passcode.</p>
+  </div>
+</div>
+
+<!-- ═══ app ═══ -->
+<main class="shell" id="app" hidden>
+
+  <header class="topbar">
+    <div class="lockup">
+      <svg class="mark" width="34" height="38" viewBox="0 0 34 38" aria-hidden="true">
+        <defs>
+          <linearGradient id="mk" x1="0" y1="0" x2="1" y2="0.4">
+            <stop offset="0" stop-color="var(--dbt-deep)" /><stop offset=".45" stop-color="var(--dbt)" />
+            <stop offset=".62" stop-color="var(--mid)" /><stop offset="1" stop-color="var(--ftran-deep)" />
+          </linearGradient>
+        </defs>
+        <path d="M17 1 33 10v18L17 37 1 28V10z" fill="none" stroke="url(#mk)" stroke-width="2" />
+        <path d="M13 13l5.5 6-5.5 6" fill="none" stroke="url(#mk)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M21 13l5.5 6-5.5 6" fill="none" stroke="url(#mk)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".45" />
+      </svg>
+      <div class="lockup-text">
+        <div class="wordmark"><span class="o">dbt&nbsp;labs</span><span class="plus">+</span><span class="b">fivetran</span></div>
+        <div class="sub" id="subLabel">step challenge</div>
+      </div>
+    </div>
+    <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">loading</span></div>
+    <div class="acct" id="acct" hidden>
+      <span id="acctState">shared board</span>
+      <button class="linkbtn" id="lockBtn" type="button">lock</button>
+    </div>
+    <button class="btn iconbtn" id="themeBtn" type="button" aria-label="Switch between light and dark">◐</button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-total">
+        <p class="eyebrow">Steps logged company-wide</p>
+        <div class="hero-val num" id="hTotal">0</div>
+        <div class="hero-dist" id="hDist">—</div>
+      </div>
+
+      <div class="hero-metrics">
+        <div class="metric">
+          <div class="metric-val num" id="mWalkers">0</div>
+          <div class="metric-lbl">Walkers</div>
+          <div class="metric-note" id="mWalkersNote">—</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val num" id="mPerDay">0</div>
+          <div class="metric-lbl">Avg / person / day</div>
+          <div class="metric-note" id="mPerDayNote">—</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val num" id="mToday">0</div>
+          <div class="metric-lbl">Logged today</div>
+          <div class="metric-note" id="mTodayNote">—</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val num" id="mEntries">0</div>
+          <div class="metric-lbl">Days logged</div>
+          <div class="metric-note" id="mEntriesNote">—</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val num" id="mBestDay">0</div>
+          <div class="metric-lbl">Best single day</div>
+          <div class="metric-note" id="mBestDayNote">—</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val num" id="mBusiest">0</div>
+          <div class="metric-lbl">Busiest day</div>
+          <div class="metric-note" id="mBusiestNote">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-right-head">
+        <p class="eyebrow">Cumulative steps, all walkers</p>
+        <div class="legend" id="chartNote"></div>
+      </div>
+      <div id="chartWrap"></div>
+    </div>
+  </section>
+
+  <section class="podium" id="podium" aria-label="Top three"></section>
+
+  <section class="tiles">
+    <div class="tile">
+      <p class="eyebrow">Your total</p>
+      <div class="tile-val num" id="tTotal">—</div>
+      <div class="tile-note" id="tTotalNote">no profile yet</div>
+    </div>
+    <div class="tile">
+      <p class="eyebrow">Your rank</p>
+      <div class="tile-val num" id="tRank">—</div>
+      <div class="tile-note" id="tRankNote">—</div>
+    </div>
+    <div class="tile">
+      <p class="eyebrow">Your daily avg</p>
+      <div class="tile-val num" id="tAvg">—</div>
+      <div class="tile-note" id="tAvgNote">—</div>
+    </div>
+    <div class="tile">
+      <p class="eyebrow">Days remaining</p>
+      <div class="tile-val num" id="tDays">—</div>
+      <div class="tile-note" id="tDaysNote">—</div>
+    </div>
+  </section>
+
+  <div class="cols">
+    <div class="panel">
+      <div class="panel-head"><p class="eyebrow" id="logHead">Join the challenge</p></div>
+
+      <div class="panel-body" id="joinView">
+        <div class="field">
+          <label for="joinName">Your name</label>
+          <input class="input" id="joinName" type="text" placeholder="Ada Okonkwo" autocomplete="name" maxlength="40">
+        </div>
+        <button class="btn btn-primary" id="joinBtn" type="button">Create profile</button>
+        <p class="hint" id="joinHint">Everything you enter stays in this browser. Nothing is uploaded.</p>
+      </div>
+
+      <div class="panel-body" id="logView" hidden>
+        <div class="who">
+          <div class="av mine" id="myAv">—</div>
+          <div style="min-width:0">
+            <div class="who-name" id="myName">—</div>
+            <div class="who-meta" id="myTeam">—</div>
+          </div>
+          <button class="linkbtn" id="switchBtn" type="button" style="margin-left:auto">switch</button>
+        </div>
+
+        <div class="field" id="personField">
+          <label for="logPerson">Logging for</label>
+          <select class="input" id="logPerson"></select>
+        </div>
+
+        <div class="row">
+          <div class="field" style="flex:1.15">
+            <label for="logSteps">Steps</label>
+            <input class="input big num" id="logSteps" type="number" min="0" max="200000" step="1" placeholder="8,000" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label for="logDate">Date</label>
+            <input class="input" id="logDate" type="date">
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="logBtn" type="button">Log steps</button>
+
+        <div class="field">
+          <span class="eyebrow">Last 7 days</span>
+          <div class="week" id="week"></div>
+          <p class="hint">Tap a day to load it above and overwrite the count.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <p class="eyebrow">Leaderboard</p>
+        <span class="count num" id="boardCount"></span>
+        <input class="input filter" id="boardFilter" type="search" placeholder="Find a name" aria-label="Filter the leaderboard by name">
+        <button class="btn" id="jumpBtn" type="button" hidden>Find me</button>
+        <button class="btn" id="refreshBtn" type="button" hidden>Refresh</button>
+        <button class="btn" id="addBtn" type="button">+ Add person</button>
+      </div>
+      <div class="addbar" id="addBar" hidden>
+        <input class="input" id="addName" type="text" placeholder="Name" maxlength="40" aria-label="Name of the walker to add">
+        <button class="btn btn-primary" id="addSave" type="button">Add</button>
+        <button class="btn" id="addCancel" type="button">Cancel</button>
+      </div>
+      <div class="board-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" class="rank">#</th>
+              <th scope="col" class="sortable" id="sortName">Walker</th>
+              <th scope="col" class="spark-col">Last 7 days</th>
+              <th scope="col" class="n sortable" id="sortToday">Today</th>
+              <th scope="col" class="n sortable avg-col" id="sortAvg">Daily avg</th>
+              <th scope="col" class="n sortable" id="sortTotal" aria-sort="descending">Total</th>
+              <th scope="col">Share of leader</th>
+              <th scope="col" class="n">Δ</th>
+            </tr>
+          </thead>
+          <tbody id="board"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="boardEmpty" hidden><p>No walkers yet — create a profile to start the board.</p></div>
+    </div>
+  </div>
+
+  <details class="tools">
+    <summary><p class="eyebrow">Challenge setup &amp; data</p></summary>
+    <div class="tools-body">
+      <div class="tools-grid">
+        <div class="field">
+          <label for="cfgStart">Start date</label>
+          <input class="input" id="cfgStart" type="date">
+        </div>
+        <div class="field">
+          <label for="cfgEnd">End date</label>
+          <input class="input" id="cfgEnd" type="date">
+        </div>
+        <div class="field">
+          <label for="cfgGoal">Daily goal</label>
+          <input class="input num" id="cfgGoal" type="number" min="1000" max="50000" step="500">
+        </div>
+      </div>
+      <p class="hint" id="cfgHint">The daily goal is per person. The tick on each leaderboard bar marks where someone hitting it every day would sit. Distance assumes 2,100 steps per mile.</p>
+
+      <div class="field">
+        <span class="eyebrow">Export</span>
+        <div class="btnrow">
+          <button class="btn" id="exportBtn" type="button">Copy board code</button>
+          <button class="btn" id="downloadBtn" type="button">Download JSON</button>
+          <button class="btn" id="csvBtn" type="button">Download CSV</button>
+        </div>
+      </div>
+
+      <div class="field" id="localOnlyTools">
+        <span class="eyebrow">Local board management</span>
+        <p class="hint">Paste a board code below to load someone else's board. This replaces everything currently on this page.</p>
+        <textarea class="input" id="importBox" placeholder="Paste a board code here" spellcheck="false"></textarea>
+        <div class="btnrow">
+          <button class="btn" id="importBtn" type="button">Load board code</button>
+          <button class="btn" id="resetBtn" type="button">Reset to sample board</button>
+          <button class="btn" id="clearBtn" type="button">Clear everything</button>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <footer id="footer"></footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * CONFIG — fill these in to switch from local mode to a shared live board.
+   * Both values are safe to publish: the anon key only grants what the
+   * row-level security policies in supabase/schema.sql allow.
+   * ═══════════════════════════════════════════════════════════════════════ */
+  const SUPABASE_URL = "https://lbpknkbodbgonephpmtf.supabase.co";
+
+  // Settings → API Keys → "Publishable key" (sb_publishable_…). A legacy
+  // "anon public" JWT (eyJ…) works too. NOT the secret key — that one bypasses
+  // every policy in supabase/schema.sql.
+  const SUPABASE_KEY = "sb_publishable_o7rA3LQLWTkcWLph4zjWAQ_DAza0Pxm";
+
+  const SUPABASE_JS = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm";
+
+  const STEPS_PER_MILE = 2100;
+  const DEFAULT_START = "2026-08-01";
+  const DEFAULT_END = "2026-08-31";
+  const KEY = "dbtft-step-challenge-v2";
+  const TOKEN_KEY = "dbtft-session";
+  const ME_KEY = "dbtft-me";
+  const POLL_MS = 120000;
+
+  const $ = (id) => document.getElementById(id);
+
+  /* ── date helpers (local dates, no timezone drift) ─────────────────────── */
+  const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const parseIso = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+  const addDays = (s, n) => { const d = parseIso(s); d.setDate(d.getDate() + n); return iso(d); };
+  const deviceToday = () => iso(new Date());
+  const daysBetween = (a, b) => Math.round((parseIso(b) - parseIso(a)) / 86400000);
+  const fmt = (n) => Math.round(n).toLocaleString("en-US");
+  const shortDate = (s) => parseIso(s).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const initials = (name) => name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?";
+  const miles = (steps) => steps / STEPS_PER_MILE;
+
+  /* ═══ the board: the single shape render() consumes, whichever mode ═════ */
+  const board = {
+    mode: "local",     // "local" | "live"
+    start: DEFAULT_START,
+    end: DEFAULT_END,
+    goal: 8000,
+    today: deviceToday(),
+    meId: null,
+    rows: [],          // {id, name, total, totalYesterday, todaySteps, logged, bestDay, bestDayOn, last7[7]}
+    daily: [],         // [{day, steps}] for elapsed days only
+    stale: false
+  };
+
+  let engine = null;
+  let sortBy = "total";
+  let filterText = "";
+
+  /* ── derived ──────────────────────────────────────────────────────────── */
+  const totalDays = () => daysBetween(board.start, board.end) + 1;
+  const lastCountedDay = () => (board.today < board.end ? board.today : board.end);
+  const elapsedDays = () => Math.min(totalDays(), Math.max(1, daysBetween(board.start, lastCountedDay()) + 1));
+  const daysLeft = () => Math.max(0, daysBetween(board.today, board.end));
+  const inWindow = (day) => day >= board.start && day <= board.end;
+
+  function rankMap(key) {
+    return new Map(board.rows
+      .map((r) => ({ id: r.id, v: r[key] }))
+      .sort((a, b) => b.v - a.v || String(a.id).localeCompare(String(b.id)))
+      .map((r, i) => [r.id, i + 1]));
+  }
+
+  function rows() {
+    const days = elapsedDays();
+    const byTotal = rankMap("total");
+    const byYesterday = rankMap("totalYesterday");
+
+    const list = board.rows.map((r) => ({
+      ...r,
+      avg: r.total / days,
+      rank: byTotal.get(r.id),
+      prevRank: byYesterday.get(r.id),
+      isMe: board.meId != null && r.id === board.meId
+    }));
+
+    const cmp = {
+      total: (a, b) => b.total - a.total,
+      avg: (a, b) => b.avg - a.avg,
+      today: (a, b) => b.todaySteps - a.todaySteps,
+      name: (a, b) => a.name.localeCompare(b.name)
+    }[sortBy];
+
+    list.sort((a, b) => cmp(a, b) || a.name.localeCompare(b.name));
+    return list;
+  }
+
+  function company() {
+    const days = elapsedDays();
+    let total = 0, entries = 0, todayTotal = 0, todayWalkers = 0;
+    let best = { steps: 0, name: null, day: null };
+    for (const r of board.rows) {
+      total += r.total;
+      entries += r.logged;
+      if (r.todaySteps > 0) { todayTotal += r.todaySteps; todayWalkers++; }
+      if (r.bestDay > best.steps) best = { steps: r.bestDay, name: r.name, day: r.bestDayOn };
+    }
+    let busiest = { day: null, steps: 0 };
+    for (const d of board.daily) if (d.steps > busiest.steps) busiest = d;
+    return { total, entries, best, days, todayTotal, todayWalkers, busiest, walkers: board.rows.length };
+  }
+
+  function series() {
+    let cum = 0;
+    return board.daily
+      .filter((d) => inWindow(d.day) && d.day <= board.today)
+      .map((d, i) => { cum += d.steps; return { i: daysBetween(board.start, d.day), day: d.day, cum }; });
+  }
+
+  /* ── toast ────────────────────────────────────────────────────────────── */
+  let toastTimer;
+  function toast(msg, bad) {
+    const el = $("toast");
+    el.textContent = msg;
+    el.classList.toggle("bad", !!bad);
+    el.classList.add("on");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("on"), bad ? 5000 : 2800);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * LOCAL ENGINE — everything in this browser, no account needed
+   * ═══════════════════════════════════════════════════════════════════════ */
+  const LocalEngine = (() => {
+    let state = null;
+
+    function seeded(n) { // mulberry32 — stable sample data
+      return function () {
+        n = (n + 0x6D2B79F5) | 0;
+        let t = Math.imul(n ^ (n >>> 15), 1 | n);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function sample() {
+      const roster = [
+        ["Priya Raghunathan", 11200], ["Marcus Bell", 9400], ["Ada Okonkwo", 8600],
+        ["Sofia Lindqvist", 12100], ["Devon Cruz", 7100], ["Yuki Tanaka", 8900],
+        ["Rowan Fitzgerald", 6200], ["Amara Diallo", 10400], ["Theo Vasquez", 9800],
+        ["Nadia Haddad", 5900], ["Ines Moreau", 10900], ["Caleb Nwosu", 7600]
+      ];
+      const span = Math.min(daysBetween(DEFAULT_START, DEFAULT_END), Math.max(0, daysBetween(DEFAULT_START, deviceToday())));
+      const people = roster.map(([name, base], i) => {
+        const rnd = seeded(i * 977 + 41);
+        const entries = {};
+        for (let d = 0; d <= span; d++) {
+          const day = addDays(DEFAULT_START, d);
+          const dow = parseIso(day).getDay();
+          if (rnd() < 0.08) continue; // a skipped day here and there, like real logging
+          entries[day] = Math.max(400, Math.round(base * (dow === 0 || dow === 6 ? 0.72 : 1) * (0.68 + rnd() * 0.62) / 100) * 100);
+        }
+        return { id: `s${i}`, name, entries };
+      });
+      return { version: 2, start: DEFAULT_START, end: DEFAULT_END, goal: 8000, people, meId: null };
+    }
+
+    function normalize(raw) {
+      return {
+        version: 2,
+        start: /^\d{4}-\d{2}-\d{2}$/.test(raw.start || "") ? raw.start : DEFAULT_START,
+        end: /^\d{4}-\d{2}-\d{2}$/.test(raw.end || "") ? raw.end : DEFAULT_END,
+        goal: Number(raw.goal) > 0 ? Math.round(Number(raw.goal)) : 8000,
+        people: (Array.isArray(raw.people) ? raw.people : [])
+          .filter((p) => p && p.name)
+          .map((p, i) => ({
+            id: String(p.id || "i" + i),
+            name: String(p.name).slice(0, 40),
+            entries: Object.fromEntries(Object.entries(p.entries || {})
+              .filter(([d, n]) => /^\d{4}-\d{2}-\d{2}$/.test(d) && Number.isFinite(Number(n)) && Number(n) > 0)
+              .map(([d, n]) => [d, Math.round(Number(n))]))
+          })),
+        meId: raw.meId || null
+      };
+    }
+
+    function save() {
+      try { localStorage.setItem(KEY, JSON.stringify(state)); }
+      catch (e) { toast("Couldn't save — this browser is blocking storage.", true); }
+    }
+
+    function project() {
+      const today = deviceToday();
+      const cutoff = today < state.end ? today : state.end;
+      const win = (day) => day >= state.start && day <= state.end;
+
+      board.mode = "local";
+      board.start = state.start;
+      board.end = state.end;
+      board.goal = state.goal;
+      board.today = today;
+      board.meId = state.meId;
+      board.stale = false;
+
+      board.rows = state.people.map((p) => {
+        let total = 0, totalYesterday = 0, logged = 0, bestDay = 0, bestDayOn = null;
+        for (const [day, n] of Object.entries(p.entries)) {
+          if (!win(day) || day > cutoff) continue;
+          total += n;
+          logged++;
+          if (day <= addDays(today, -1)) totalYesterday += n;
+          if (n > bestDay || (n === bestDay && bestDayOn && day < bestDayOn)) { bestDay = n; bestDayOn = day; }
+        }
+        const last7 = [];
+        for (let i = 6; i >= 0; i--) {
+          const day = addDays(today, -i);
+          last7.push(win(day) ? (p.entries[day] || 0) : 0);
+        }
+        return { id: p.id, name: p.name, total, totalYesterday, todaySteps: p.entries[today] || 0, logged, bestDay, bestDayOn, last7 };
+      });
+
+      const daily = [];
+      for (let i = 0; i <= daysBetween(state.start, cutoff); i++) {
+        const day = addDays(state.start, i);
+        let steps = 0;
+        for (const p of state.people) steps += p.entries[day] || 0;
+        daily.push({ day, steps });
+      }
+      board.daily = daily;
+    }
+
+    return {
+      kind: "local",
+      async init() {
+        try {
+          const raw = localStorage.getItem(KEY);
+          state = raw ? normalize(JSON.parse(raw)) : sample();
+        } catch (e) { state = sample(); }
+        project();
+      },
+      async refresh() { project(); },
+      async setEntry(personId, day, steps) {
+        const p = state.people.find((x) => x.id === personId);
+        if (!p) throw new Error("That walker is no longer on the board.");
+        if (steps === 0) delete p.entries[day];
+        else p.entries[day] = steps;
+        save(); project();
+      },
+      async addPerson(name) {
+        state.people.push({ id: "p" + Date.now().toString(36), name, entries: {} });
+        save(); project();
+      },
+      async claim(name) {
+        const found = state.people.find((p) => p.name.toLowerCase() === name.toLowerCase());
+        if (found) { state.meId = found.id; save(); project(); return found.name; }
+        const id = "p" + Date.now().toString(36);
+        state.people.push({ id, name, entries: {} });
+        state.meId = id;
+        save(); project();
+        return name;
+      },
+      async release() { state.meId = null; save(); project(); },
+      async setConfig(patch) { Object.assign(state, patch); save(); project(); },
+      exportState() { return state; },
+      importState(next) { state = normalize(next); state.meId = null; save(); project(); },
+      resetSample() { state = sample(); save(); project(); },
+      clearAll() {
+        state = { version: 2, start: DEFAULT_START, end: DEFAULT_END, goal: 8000, people: [], meId: null };
+        save(); project();
+      },
+      personEntries(personId) {
+        const p = state.people.find((x) => x.id === personId);
+        return p ? p.entries : {};
+      }
+    };
+  })();
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * LIVE ENGINE — shared board in Supabase
+   * ═══════════════════════════════════════════════════════════════════════ */
+  const LiveEngine = (() => {
+    let sb = null, token = null, snapshot = null;
+
+    function fail(error, fallback) {
+      // Postgres RAISE messages arrive as readable prose already
+      const msg = (error && (error.message || error.error_description)) || fallback;
+      return new Error(String(msg).replace(/^.*(?:JWT|permission denied|row-level security).*$/i,
+        "The board rejected that request. Try locking and entering the passcode again."));
+    }
+
+    async function rpc(fn, args) {
+      const { data, error } = await sb.rpc(fn, args);
+      if (error) throw fail(error, "Couldn't reach the board.");
+      return data;
+    }
+
+    function project() {
+      board.mode = "live";
+      board.today = snapshot.server_date;
+      board.start = snapshot.challenge.starts_on;
+      board.end = snapshot.challenge.ends_on;
+      board.goal = snapshot.challenge.daily_goal;
+      board.rows = (snapshot.walkers || []).map((w) => ({
+        id: w.id,
+        name: w.name,
+        total: Number(w.total_steps) || 0,
+        totalYesterday: Number(w.total_yesterday) || 0,
+        todaySteps: Number(w.today_steps) || 0,
+        logged: Number(w.days_logged) || 0,
+        bestDay: Number(w.best_day) || 0,
+        bestDayOn: w.best_day_on || null,
+        last7: Array.isArray(w.last7) && w.last7.length === 7 ? w.last7.map(Number) : [0, 0, 0, 0, 0, 0, 0]
+      }));
+      board.daily = (snapshot.daily || []).map((d) => ({ day: d.day, steps: Number(d.steps) || 0 }));
+
+      // "who am I" is a local convenience only; drop it if that walker is gone
+      const savedMe = readMe();
+      board.meId = board.rows.some((r) => r.id === savedMe) ? savedMe : null;
+    }
+
+    function readMe() { try { return localStorage.getItem(ME_KEY); } catch (e) { return null; } }
+    function writeMe(id) {
+      try { id ? localStorage.setItem(ME_KEY, id) : localStorage.removeItem(ME_KEY); } catch (e) {}
+    }
+
+    async function pull() {
+      const data = await rpc("board_snapshot", { t: token });
+      if (!data || !data.challenge) throw new Error("The challenge hasn't been set up yet.");
+      snapshot = data;
+      project();
+      board.stale = false;
+    }
+
+    return {
+      kind: "live",
+
+      async connect() {
+        const { createClient } = await import(SUPABASE_JS);
+        sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
+        try { token = localStorage.getItem(TOKEN_KEY); } catch (e) { token = null; }
+        return !!token;
+      },
+
+      async unlock(passcode) {
+        const t = await rpc("unlock", { passcode });
+        if (!t) throw new Error("That passcode is not right.");
+        token = t;
+        try { localStorage.setItem(TOKEN_KEY, t); } catch (e) {}
+      },
+
+      lock() {
+        token = null;
+        try { localStorage.removeItem(TOKEN_KEY); } catch (e) {}
+      },
+
+      async init() { await pull(); },
+      async refresh() { await pull(); },
+
+      async setEntry(personId, day, steps) {
+        await rpc("set_entry", { t: token, walker: personId, on_day: day, steps });
+        await pull();
+      },
+
+      async addPerson(name) {
+        await rpc("claim_walker", { t: token, walker_name: name });
+        await pull();
+      },
+
+      async claim(name) {
+        const id = await rpc("claim_walker", { t: token, walker_name: name });
+        writeMe(id);
+        await pull();
+        const row = board.rows.find((r) => r.id === id);
+        return row ? row.name : name;
+      },
+
+      async release() { writeMe(null); await pull(); },
+
+      async setConfig(patch) {
+        const next = {
+          s: patch.start || board.start,
+          e: patch.end || board.end,
+          goal: patch.goal || board.goal
+        };
+        await rpc("set_challenge", { t: token, s: next.s, e: next.e, goal: next.goal });
+        await pull();
+      },
+
+      exportState() {
+        return {
+          start: board.start, end: board.end, goal: board.goal,
+          people: board.rows.map((r) => ({ id: r.id, name: r.name, total: r.total, days_logged: r.logged }))
+        };
+      },
+
+      markStale() { board.stale = true; }
+    };
+  })();
+
+  /* ═══ chart ════════════════════════════════════════════════════════════ */
+  function chart() {
+    const c = company();
+    const pts = series();
+    const n = totalDays();
+    const W = 700, H = 168, L = 8, R = 8, T = 16, B = 22;
+    const peak = pts.length ? pts[pts.length - 1].cum : 0;
+    const yMax = Math.max(peak, 1) * 1.15;
+    const x = (i) => L + (n <= 1 ? 0 : (i / (n - 1)) * (W - L - R));
+    const y = (v) => H - B - (v / yMax) * (H - T - B);
+
+    const grid = [0.33, 0.66, 1].map((f) =>
+      `<line x1="${L}" y1="${y(yMax * f).toFixed(1)}" x2="${W - R}" y2="${y(yMax * f).toFixed(1)}"
+        stroke="var(--line)" stroke-width="1" vector-effect="non-scaling-stroke"/>`).join("");
+
+    let body = "";
+    if (pts.length > 1) {
+      const line = pts.map((p, k) => `${k ? "L" : "M"}${x(p.i).toFixed(1)},${y(p.cum).toFixed(1)}`).join(" ");
+      const last = pts[pts.length - 1];
+      body = `
+        <path d="${line} L${x(last.i).toFixed(1)},${y(0)} L${x(pts[0].i).toFixed(1)},${y(0)} Z" fill="url(#area)"/>
+        <path d="${line}" fill="none" stroke="url(#ln)" stroke-width="2.25" stroke-linejoin="round"
+          stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+        <circle cx="${x(last.i).toFixed(1)}" cy="${y(last.cum).toFixed(1)}" r="3.5" fill="var(--mid)"/>
+        <circle cx="${x(last.i).toFixed(1)}" cy="${y(last.cum).toFixed(1)}" r="7" fill="none" stroke="var(--mid)"
+          stroke-width="1" opacity=".4" vector-effect="non-scaling-stroke"/>`;
+    } else if (pts.length === 1) {
+      body = `<circle cx="${x(pts[0].i).toFixed(1)}" cy="${y(pts[0].cum).toFixed(1)}" r="3.5" fill="var(--mid)"/>`;
+    }
+
+    const nowI = pts.length ? pts[pts.length - 1].i : 0;
+    const nowMark = pts.length && nowI < n - 1
+      ? `<line x1="${x(nowI).toFixed(1)}" y1="${T}" x2="${x(nowI).toFixed(1)}" y2="${H - B}"
+          stroke="var(--line-strong)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+        <text x="${(x(nowI) + 6).toFixed(1)}" y="${T + 10}" fill="var(--muted)"
+          font-family="ui-monospace, monospace" font-size="9.5" letter-spacing=".08em">${daysLeft()} DAYS LEFT</text>`
+      : "";
+
+    return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img"
+        aria-label="Cumulative company steps: ${fmt(c.total)} so far across ${fmt(c.walkers)} walkers">
+      <defs>
+        <linearGradient id="ln" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="var(--dbt-deep)"/><stop offset=".3" stop-color="var(--dbt)"/>
+          <stop offset=".6" stop-color="var(--mid)"/><stop offset="1" stop-color="var(--ftran)"/>
+        </linearGradient>
+        <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="var(--mid)" stop-opacity=".26"/>
+          <stop offset="1" stop-color="var(--mid)" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      ${grid}
+      <line x1="${L}" y1="${y(0)}" x2="${W - R}" y2="${y(0)}" stroke="var(--line-strong)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      ${peak > 0 ? `<text x="${L}" y="${(y(peak) - 6).toFixed(1)}" fill="var(--muted)"
+        font-family="ui-monospace, monospace" font-size="9.5" letter-spacing=".04em">${fmt(peak)}</text>` : ""}
+      ${body}${nowMark}
+      <text x="${L}" y="${H - 6}" fill="var(--muted)" font-family="ui-monospace, monospace" font-size="9.5" letter-spacing=".08em">${shortDate(board.start).toUpperCase()}</text>
+      <text x="${W - R}" y="${H - 6}" text-anchor="end" fill="var(--muted)" font-family="ui-monospace, monospace" font-size="9.5" letter-spacing=".08em">${shortDate(board.end).toUpperCase()}</text>
+    </svg>`;
+  }
+
+  /* ═══ sparkline ════════════════════════════════════════════════════════ */
+  function sparkline(r) {
+    const vals = r.last7;
+    const peak = Math.max(...vals, 1);
+    const W = 88, H = 26, PAD = 3;
+    const x = (i) => (i / 6) * W;
+    const y = (v) => H - PAD - (v / peak) * (H - PAD * 2);
+    const line = vals.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+    const color = r.rank === 1 ? "var(--gold)" : r.rank === 2 ? "var(--silver)" : r.rank === 3 ? "var(--bronze)"
+      : r.isMe ? "var(--dbt)" : "var(--ftran)";
+    const gid = `sp-${String(r.id).replace(/[^a-zA-Z0-9_-]/g, "")}`;
+    return `<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Last 7 days, peak ${fmt(peak)} steps">
+      <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="${color}" stop-opacity=".3"/><stop offset="1" stop-color="${color}" stop-opacity="0"/>
+      </linearGradient></defs>
+      <line x1="0" y1="${H - PAD}" x2="${W}" y2="${H - PAD}" stroke="var(--line)" stroke-width="1"/>
+      <path d="${line} L${W},${H} L0,${H} Z" fill="url(#${gid})"/>
+      <path d="${line}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="${W}" cy="${y(vals[6]).toFixed(1)}" r="2.4" fill="${color}"/>
+    </svg>`;
+  }
+
+  /* ═══ leaderboard rows ═════════════════════════════════════════════════
+   * At 167 walkers a full innerHTML rebuild on every poll would throw away
+   * and re-parse thousands of nodes, and restart every bar animation. So rows
+   * are built once, keyed by walker id, then updated in place and reordered by
+   * moving existing nodes. Sparklines are the expensive part, so they are only
+   * regenerated when their seven numbers actually change — and skipped
+   * entirely while the column is hidden on narrow screens.
+   * ═══════════════════════════════════════════════════════════════════════ */
+  const rowEls = new Map();
+  const narrow = window.matchMedia("(max-width: 1040px)");
+  let sparksVisible = !narrow.matches;
+
+  function buildRow(r) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td class="rank num"></td>
+      <td><div class="who-cell">
+        <div class="av sm"></div>
+        <div style="min-width:0"><div class="nm"></div><div class="tm"></div></div>
+      </div></td>
+      <td class="spark-cell"></td>
+      <td class="n sub today"></td>
+      <td class="n sub avg-cell"></td>
+      <td class="n total"></td>
+      <td class="bar-cell"><div class="track">
+        <div class="fill"><i class="ramp"></i></div><span class="pace"></span>
+      </div></td>
+      <td class="n delta-cell"></td>`;
+    tr.$ = {
+      rank: tr.children[0], av: tr.querySelector(".av"), nm: tr.querySelector(".nm"),
+      tm: tr.querySelector(".tm"), spark: tr.children[2], today: tr.children[3],
+      avg: tr.children[4], total: tr.children[5], fill: tr.querySelector(".fill"),
+      pace: tr.querySelector(".pace"), delta: tr.children[7]
+    };
+    tr.$sig = {};
+    return tr;
+  }
+
+  function updateRow(tr, r, leader, goalPace, mounting) {
+    const c = tr.$, sig = tr.$sig;
+
+    if (sig.isMe !== r.isMe) {
+      tr.classList.toggle("me", r.isMe);
+      c.av.className = "av sm" + (r.isMe ? " mine" : "");
+      sig.isMe = r.isMe;
+      sig.name = null; // force the YOU tag to redraw
+    }
+
+    if (sig.rank !== r.rank || sig.hasTotal !== (r.total > 0)) {
+      c.rank.innerHTML = MEDAL[r.rank] && r.total > 0
+        ? `<span class="medal ${MEDAL[r.rank]}">${r.rank}</span>`
+        : String(r.rank).padStart(2, "0");
+      sig.rank = r.rank;
+      sig.hasTotal = r.total > 0;
+    }
+
+    if (sig.name !== r.name) {
+      c.av.textContent = initials(r.name);
+      c.nm.innerHTML = esc(r.name) + (r.isMe ? '<span class="you-tag">YOU</span>' : "");
+      sig.name = r.name;
+    }
+
+    if (sig.total !== r.total || sig.logged !== r.logged) {
+      c.tm.textContent = `${fmt(miles(r.total))} mi · ${r.logged} day${r.logged === 1 ? "" : "s"}`;
+      c.total.textContent = fmt(r.total);
+      sig.logged = r.logged;
+    }
+
+    if (sig.today !== r.todaySteps) {
+      c.today.textContent = r.todaySteps ? fmt(r.todaySteps) : "—";
+      c.today.style.color = r.todaySteps ? "" : "var(--muted)";
+      sig.today = r.todaySteps;
+    }
+
+    const avg = fmt(r.avg);
+    if (sig.avg !== avg) { c.avg.textContent = avg; sig.avg = avg; }
+
+    const sparkSig = sparksVisible ? r.last7.join(",") + ":" + r.rank + ":" + r.isMe : "off";
+    if (sig.spark !== sparkSig) {
+      c.spark.innerHTML = sparksVisible ? sparkline(r) : "";
+      sig.spark = sparkSig;
+    }
+
+    const p = Math.max(0.5, (r.total / leader) * 100).toFixed(2);
+    if (sig.p !== p) {
+      c.fill.style.setProperty("--p", p);
+      // animate the grow-in only on first mount; later updates just move
+      if (mounting) requestAnimationFrame(() => { c.fill.style.width = p + "%"; });
+      else c.fill.style.width = p + "%";
+      sig.p = p;
+    }
+
+    const pace = Math.min(100, (goalPace / leader) * 100).toFixed(2);
+    if (sig.pace !== pace) {
+      c.pace.style.left = pace + "%";
+      c.pace.title = `On-goal pace: ${fmt(goalPace)} steps`;
+      sig.pace = pace;
+    }
+
+    const dKey = `${r.prevRank}>${r.rank}`;
+    if (sig.delta !== dKey) {
+      c.delta.innerHTML = r.prevRank == null || r.prevRank === r.rank
+        ? '<span class="delta hold">—</span>'
+        : r.prevRank > r.rank
+          ? `<span class="delta up">▲${r.prevRank - r.rank}</span>`
+          : `<span class="delta down">▼${r.rank - r.prevRank}</span>`;
+      sig.delta = dKey;
+    }
+
+    sig.total = r.total;
+  }
+
+  function renderBoard(list, leader, goalPace) {
+    const tbody = $("board");
+    const seen = new Set();
+    let prev = null;
+
+    for (const r of list) {
+      seen.add(r.id);
+      let tr = rowEls.get(r.id);
+      const mounting = !tr;
+      if (mounting) { tr = buildRow(r); rowEls.set(r.id, tr); }
+      updateRow(tr, r, leader, goalPace, mounting);
+
+      // reorder by moving the existing node rather than rebuilding
+      const want = prev ? prev.nextElementSibling : tbody.firstElementChild;
+      if (want !== tr) tbody.insertBefore(tr, want);
+      prev = tr;
+    }
+
+    for (const [id, tr] of rowEls) {
+      if (!seen.has(id)) { tr.remove(); rowEls.delete(id); }
+    }
+  }
+
+  narrow.addEventListener("change", () => {
+    sparksVisible = !narrow.matches;
+    for (const tr of rowEls.values()) tr.$sig.spark = null;
+    render();
+  });
+
+  /* ═══ render ═══════════════════════════════════════════════════════════ */
+  const MEDAL = { 1: "g", 2: "s", 3: "b" };
+  const PLACE = { 1: "1st place", 2: "2nd place", 3: "3rd place" };
+
+  function render() {
+    const live = board.mode === "live";
+    const list = rows();
+    const c = company();
+    const mine = list.find((r) => r.isMe) || null;
+    const leader = Math.max(...list.map((r) => r.total), 1);
+    const days = elapsedDays();
+
+    /* status */
+    const over = board.today > board.end;
+    const started = board.today >= board.start;
+    $("statusText").textContent = board.stale ? "reconnecting…"
+      : over ? `finished ${shortDate(board.end)}`
+      : started ? `day ${days} of ${totalDays()}`
+      : `starts ${shortDate(board.start)}`;
+    $("statusDot").className = "dot" + (board.stale ? " stale" : live ? "" : " off");
+    $("subLabel").textContent = `step challenge · ${parseIso(board.end).toLocaleDateString("en-US", { month: "long", year: "numeric" })}`;
+
+    /* hero */
+    $("hTotal").textContent = fmt(c.total);
+    $("hDist").innerHTML = `<b>${fmt(miles(c.total))} miles</b> · ${fmt(miles(c.total) * 1.609)} km covered together`;
+
+    $("mWalkers").textContent = fmt(c.walkers);
+    $("mWalkersNote").textContent = c.walkers ? "on the board" : "nobody yet";
+    $("mPerDay").textContent = fmt(c.walkers ? c.total / c.walkers / days : 0);
+    $("mPerDayNote").textContent = `goal is ${fmt(board.goal)}`;
+    $("mToday").textContent = fmt(c.todayTotal);
+    $("mTodayNote").textContent = c.todayWalkers
+      ? `${c.todayWalkers} walker${c.todayWalkers === 1 ? "" : "s"} so far`
+      : "nobody has logged yet";
+    $("mEntries").textContent = fmt(c.entries);
+    $("mEntriesNote").textContent = `of ${fmt(c.walkers * days)} possible`;
+    $("mBestDay").textContent = fmt(c.best.steps);
+    $("mBestDayNote").textContent = c.best.name
+      ? `${c.best.name.split(" ")[0]}${c.best.day ? " · " + shortDate(c.best.day) : ""}`
+      : "nothing logged yet";
+    $("mBusiest").textContent = fmt(c.busiest.steps);
+    $("mBusiestNote").textContent = c.busiest.day ? shortDate(c.busiest.day) : "nothing logged yet";
+
+    $("chartNote").textContent = c.total
+      ? `${fmt(c.total / Math.max(1, days))} per day company-wide`
+      : "";
+    $("chartWrap").innerHTML = chart();
+
+    /* podium */
+    const top = list.slice().sort((a, b) => a.rank - b.rank).filter((r) => r.rank <= 3 && r.total > 0);
+    $("podium").innerHTML = top.map((r) => {
+      const m = MEDAL[r.rank];
+      return `<div class="pod p${r.rank}">
+        <div class="pod-top"><div class="medal ${m}">${r.rank}</div><div class="pod-place">${PLACE[r.rank]}</div></div>
+        <div class="pod-who">
+          <div class="av-ring ${m}"><div class="av">${esc(initials(r.name))}</div></div>
+          <div class="pod-name">${esc(r.name)}${r.isMe ? '<span class="you-tag">YOU</span>' : ""}</div>
+        </div>
+        <div>
+          <div class="pod-total num">${fmt(r.total)}</div>
+          <div class="pod-meta">${fmt(r.avg)}/day · ${fmt(miles(r.total))} mi</div>
+        </div>
+        <div class="pod-plinth"></div>
+      </div>`;
+    }).join("");
+
+    /* personal tiles */
+    if (mine) {
+      $("tTotal").textContent = fmt(mine.total);
+      $("tTotalNote").textContent = `${fmt(miles(mine.total))} miles · ${mine.logged} day${mine.logged === 1 ? "" : "s"} logged`;
+      $("tRank").textContent = String(mine.rank);
+      $("tRankNote").textContent = `of ${list.length} · ${mine.rank === 1 ? "leading the board" : `${fmt(leader - mine.total)} behind first`}`;
+      $("tAvg").textContent = fmt(mine.avg);
+      const vsGoal = mine.avg - board.goal;
+      $("tAvgNote").textContent = `${vsGoal >= 0 ? "+" : "−"}${fmt(Math.abs(vsGoal))} vs ${fmt(board.goal)} goal`;
+    } else {
+      $("tTotal").textContent = "—";
+      $("tTotalNote").textContent = "no profile yet";
+      $("tRank").textContent = "—";
+      $("tRankNote").textContent = `${list.length} walker${list.length === 1 ? "" : "s"} on the board`;
+      $("tAvg").textContent = "—";
+      $("tAvgNote").textContent = `goal is ${fmt(board.goal)}/day`;
+    }
+
+    $("tDays").textContent = over ? "0" : fmt(daysLeft());
+    $("tDaysNote").textContent = over ? `ended ${shortDate(board.end)}` : `ends ${shortDate(board.end)}`;
+
+    /* leaderboard */
+    const goalPace = board.goal * days;
+    const shown = filterText ? list.filter((r) => r.name.toLowerCase().includes(filterText)) : list;
+
+    renderBoard(shown, leader, goalPace);
+
+    $("boardEmpty").hidden = shown.length > 0;
+    $("boardEmpty").firstElementChild.textContent = list.length === 0
+      ? "No walkers yet — add your name to start the board."
+      : `No one on the board matches “${filterText}”.`;
+    $("boardCount").textContent = shown.length === list.length
+      ? `${list.length} walker${list.length === 1 ? "" : "s"}`
+      : `${shown.length} of ${list.length}`;
+    $("jumpBtn").hidden = !mine;
+
+    /* mode-dependent chrome */
+    $("refreshBtn").hidden = !live;
+    $("localOnlyTools").hidden = live;
+    $("acct").hidden = !live;
+    $("acctState").textContent = "shared board";
+
+    $("joinHint").textContent = live
+      ? "Pick your name from the list below, or type a new one to join."
+      : "Everything you enter stays in this browser. Nothing is uploaded.";
+
+    $("footer").innerHTML = live
+      ? "Built for the dbt Labs + Fivetran step challenge.<br>Shared board — everyone sees the same numbers, and anyone with the passcode can edit them."
+      : "Built for the dbt Labs + Fivetran step challenge.<br>Saved in this browser only — export a board code to share it.";
+
+    /* log panel */
+    $("joinView").hidden = !!mine;
+    $("logView").hidden = !mine;
+    $("logHead").textContent = mine ? "Log steps" : live ? "Pick your name" : "Join the challenge";
+
+    if (mine) {
+      $("myAv").textContent = initials(mine.name);
+      $("myName").textContent = mine.name;
+      $("myTeam").textContent = `Rank ${mine.rank} of ${list.length} · ${fmt(mine.total)} steps`;
+
+      const sel = $("logPerson");
+      const keep = sel.value;
+      sel.innerHTML = list.slice()
+        .sort((a, b) => (a.isMe ? -1 : b.isMe ? 1 : a.name.localeCompare(b.name)))
+        .map((p) => `<option value="${esc(p.id)}">${esc(p.name)}${p.isMe ? " (you)" : ""}</option>`)
+        .join("");
+      sel.value = list.some((p) => p.id === keep) ? keep : mine.id;
+      renderWeek(list);
+    }
+
+    // The date field follows the challenge's own timezone, not the device's. On
+    // a UTC server those differ for a US evening, which would otherwise default
+    // the picker to a day the challenge does not think has started.
+    const maxDay = board.today < board.end ? board.today : board.end;
+    $("logDate").min = board.start;
+    $("logDate").max = maxDay;
+    const cur = $("logDate").value;
+    if (!cur || cur < board.start || cur > maxDay) $("logDate").value = maxDay;
+    $("cfgStart").value = board.start;
+    $("cfgEnd").value = board.end;
+    $("cfgGoal").value = board.goal;
+  }
+
+  function logTargetId() {
+    return $("logPerson").value || board.meId;
+  }
+
+  function renderWeek(list) {
+    const targetId = logTargetId(list);
+    const row = (list || rows()).find((r) => r.id === targetId);
+    if (!row) return;
+    let html = "";
+    for (let i = 6; i >= 0; i--) {
+      const day = addDays(board.today, -i);
+      const n = row.last7[6 - i] || 0;
+      const off = !inWindow(day);
+      const label = parseIso(day).toLocaleDateString("en-US", { weekday: "narrow" });
+      html += `<button type="button" class="day ${n ? "has" : ""} ${i === 0 ? "today" : ""} ${off ? "off" : ""}"
+          data-day="${day}" data-steps="${n}"
+          title="${shortDate(day)}: ${off ? "outside the challenge" : n ? fmt(n) + " steps" : "nothing logged"}">
+        <span class="day-lbl">${label}</span>
+        <span class="day-box">${n ? Math.round(n / 100) / 10 + "k" : "·"}</span>
+      </button>`;
+    }
+    $("week").innerHTML = html;
+  }
+
+  /* ═══ actions ══════════════════════════════════════════════════════════ */
+  let busy = false;
+  async function act(btn, fn) {
+    if (busy) return;
+    busy = true;
+    const label = btn ? btn.textContent : null;
+    if (btn) { btn.disabled = true; btn.textContent = "…"; }
+    try {
+      await fn();
+    } catch (e) {
+      toast(e.message || "Something went wrong.", true);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = label; }
+      busy = false;
+      render();
+    }
+  }
+
+  $("joinBtn").addEventListener("click", () => act($("joinBtn"), async () => {
+    const name = $("joinName").value.trim();
+    if (!name) { $("joinName").focus(); throw new Error("Add your name first."); }
+    const who = await engine.claim(name);
+    toast(`Welcome, ${who.split(" ")[0]}.`);
+    $("joinName").value = "";
+  }));
+
+  $("joinName").addEventListener("keydown", (e) => { if (e.key === "Enter") $("joinBtn").click(); });
+
+  $("switchBtn").addEventListener("click", () => act(null, async () => {
+    await engine.release();
+    $("joinName").focus();
+  }));
+
+  $("logBtn").addEventListener("click", () => act($("logBtn"), async () => {
+    const raw = $("logSteps").value.trim();
+    const day = $("logDate").value;
+    const targetId = logTargetId(null);
+    if (!targetId) throw new Error("Create your profile first.");
+    if (raw === "") { $("logSteps").focus(); throw new Error("Enter a step count."); }
+    const n = Math.round(Number(raw));
+    if (!Number.isFinite(n) || n < 0) { $("logSteps").focus(); throw new Error("Steps must be a positive number."); }
+    if (n > 200000) { $("logSteps").focus(); throw new Error("That's over the 200,000 daily limit."); }
+    if (!day) { $("logDate").focus(); throw new Error("Pick a date."); }
+    if (day > board.today) throw new Error("That date is in the future.");
+    if (!inWindow(day)) throw new Error(`${shortDate(day)} is outside the challenge window.`);
+
+    await engine.setEntry(targetId, day, n);
+    $("logSteps").value = "";
+    toast(n === 0 ? `Cleared ${shortDate(day)}.` : `Logged ${fmt(n)} steps · ${shortDate(day)}`);
+  }));
+
+  $("logSteps").addEventListener("keydown", (e) => { if (e.key === "Enter") $("logBtn").click(); });
+  $("logPerson").addEventListener("change", () => renderWeek(null));
+
+  $("week").addEventListener("click", (e) => {
+    const btn = e.target.closest(".day");
+    if (!btn) return;
+    $("logDate").value = btn.dataset.day;
+    $("logSteps").value = Number(btn.dataset.steps) > 0 ? btn.dataset.steps : "";
+    $("logSteps").focus();
+    $("logSteps").select();
+  });
+
+  $("refreshBtn").addEventListener("click", () => act($("refreshBtn"), async () => {
+    await engine.refresh();
+    toast("Leaderboard updated.");
+  }));
+
+  $("boardFilter").addEventListener("input", (e) => {
+    filterText = e.target.value.trim().toLowerCase();
+    render();
+  });
+
+  $("jumpBtn").addEventListener("click", () => {
+    if (filterText) { filterText = ""; $("boardFilter").value = ""; render(); }
+    const tr = board.meId ? rowEls.get(board.meId) : null;
+    if (!tr) { toast("Create your profile first."); return; }
+    tr.scrollIntoView({ behavior: "smooth", block: "center" });
+    tr.classList.remove("hit");
+    void tr.offsetWidth;           // restart the highlight animation
+    tr.classList.add("hit");
+  });
+
+  function closeAdd() {
+    $("addBar").hidden = true;
+    $("addName").value = "";
+    $("addBtn").textContent = "+ Add person";
+  }
+
+  $("addBtn").addEventListener("click", () => {
+    if (!$("addBar").hidden) { closeAdd(); return; }
+    $("addBar").hidden = false;
+    $("addBtn").textContent = "Close";
+    $("addName").focus();
+  });
+
+  $("addCancel").addEventListener("click", closeAdd);
+
+  $("addSave").addEventListener("click", () => act($("addSave"), async () => {
+    const clean = $("addName").value.trim().slice(0, 40);
+    if (!clean) { $("addName").focus(); throw new Error("Add a name first."); }
+    if (board.rows.some((p) => p.name.toLowerCase() === clean.toLowerCase())) {
+      $("addName").focus();
+      throw new Error(`${clean} is already on the board.`);
+    }
+    await engine.addPerson(clean);
+    $("addName").value = "";
+    $("addName").focus();
+    toast(`Added ${clean}.`);
+  }));
+
+  $("addName").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") $("addSave").click();
+    if (e.key === "Escape") closeAdd();
+  });
+
+  /* sorting */
+  const sorters = { sortName: "name", sortToday: "today", sortAvg: "avg", sortTotal: "total" };
+  for (const [id, key] of Object.entries(sorters)) {
+    $(id).addEventListener("click", () => {
+      sortBy = key;
+      for (const other of Object.keys(sorters)) $(other).removeAttribute("aria-sort");
+      $(id).setAttribute("aria-sort", key === "name" ? "ascending" : "descending");
+      render();
+    });
+  }
+
+  /* config */
+  $("cfgStart").addEventListener("change", (e) => act(null, async () => {
+    if (!e.target.value) return;
+    if (e.target.value > board.end) { e.target.value = board.start; throw new Error("Start must come before the end date."); }
+    await engine.setConfig({ start: e.target.value });
+  }));
+
+  $("cfgEnd").addEventListener("change", (e) => act(null, async () => {
+    if (!e.target.value) return;
+    if (e.target.value < board.start) { e.target.value = board.end; throw new Error("End must come after the start date."); }
+    await engine.setConfig({ end: e.target.value });
+  }));
+
+  $("cfgGoal").addEventListener("change", (e) => act(null, async () => {
+    const n = Math.round(Number(e.target.value));
+    if (!Number.isFinite(n) || n < 1) { e.target.value = board.goal; throw new Error("Set a positive daily goal."); }
+    await engine.setConfig({ goal: n });
+  }));
+
+  /* export */
+  $("exportBtn").addEventListener("click", async () => {
+    const code = btoa(unescape(encodeURIComponent(JSON.stringify(engine.exportState()))));
+    try {
+      await navigator.clipboard.writeText(code);
+      toast("Board code copied.");
+    } catch (e) {
+      if (!$("localOnlyTools").hidden) { $("importBox").value = code; $("importBox").select(); }
+      toast("Clipboard blocked — copy the code from the box below.", true);
+    }
+  });
+
+  function download(filename, data, type) {
+    const blob = new Blob([data], { type: type || "application/octet-stream" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast(`Downloaded ${filename}`);
+  }
+
+  $("downloadBtn").addEventListener("click", () => {
+    download("step-challenge.json", JSON.stringify(engine.exportState(), null, 2), "application/json");
+  });
+
+  $("csvBtn").addEventListener("click", () => {
+    const q = (v) => `"${String(v).replace(/"/g, '""')}"`;
+    const lines = [["rank", "name", "total_steps", "miles", "daily_avg", "days_logged"].join(",")];
+    rows().slice().sort((a, b) => a.rank - b.rank).forEach((r) => {
+      lines.push([r.rank, q(r.name), r.total, miles(r.total).toFixed(1), Math.round(r.avg), r.logged].join(","));
+    });
+    download("step-challenge.csv", lines.join("\n"), "text/csv");
+  });
+
+  $("importBtn").addEventListener("click", () => act($("importBtn"), async () => {
+    const raw = $("importBox").value.trim();
+    if (!raw) throw new Error("Paste a board code first.");
+    let next;
+    try {
+      next = JSON.parse(raw.startsWith("{") ? raw : decodeURIComponent(escape(atob(raw))));
+    } catch (e) { throw new Error("That code isn't readable — check it copied in full."); }
+    if (!next || !Array.isArray(next.people)) throw new Error("That code doesn't contain a board.");
+    if (!confirm("Load this board? Everything currently on this page will be replaced.")) return;
+    engine.importState(next);
+    $("importBox").value = "";
+    toast(`Loaded ${board.rows.length} walkers.`);
+  }));
+
+  $("resetBtn").addEventListener("click", () => act(null, async () => {
+    if (!confirm("Replace this board with the sample roster?")) return;
+    engine.resetSample();
+    toast("Sample board restored.");
+  }));
+
+  $("clearBtn").addEventListener("click", () => act(null, async () => {
+    if (!confirm("Delete every walker and all logged steps? This can't be undone.")) return;
+    engine.clearAll();
+    toast("Board cleared.");
+  }));
+
+  /* theme */
+  $("themeBtn").addEventListener("click", () => {
+    const root = document.documentElement;
+    const current = root.getAttribute("data-theme")
+      || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const next = current === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("dbtft-theme", next); } catch (e) { /* theme just won't persist */ }
+  });
+
+  /* ═══ gate (live mode sign-in) ═════════════════════════════════════════ */
+  function showGate(title, bodyHtml, opts) {
+    const o = opts || {};
+    $("gate").hidden = false;
+    $("app").hidden = true;
+    $("gateTitle").textContent = title;
+    $("gateBody").innerHTML = bodyHtml;
+    $("gateForm").hidden = !o.showInput;
+    $("gateBtn").hidden = !o.button;
+    $("gateHint").hidden = !o.hint;
+    if (o.button) $("gateBtn").textContent = o.button;
+    if (o.hint) $("gateHint").textContent = o.hint;
+    if (o.showInput) $("gatePass").focus();
+  }
+
+  function showApp() {
+    $("gate").hidden = true;
+    $("app").hidden = false;
+  }
+
+  async function enterWithPasscode(passcode) {
+    await LiveEngine.unlock(passcode);
+    engine = LiveEngine;
+    await engine.init();
+    showApp();
+    render();
+    startPolling();
+  }
+
+  $("gateBtn").addEventListener("click", () => act($("gateBtn"), async () => {
+    const passcode = $("gatePass").value;
+    if (!passcode) { $("gatePass").focus(); throw new Error("Enter the event passcode."); }
+    await enterWithPasscode(passcode);
+    $("gatePass").value = "";
+  }));
+
+  $("gatePass").addEventListener("keydown", (e) => { if (e.key === "Enter") $("gateBtn").click(); });
+
+  $("lockBtn").addEventListener("click", () => {
+    LiveEngine.lock();
+    location.reload();
+  });
+
+  /* ═══ polling ══════════════════════════════════════════════════════════
+   * A snapshot for 167 walkers is roughly 45KB, so an always-on 60s poll from
+   * a few dozen idle tabs would burn through a free tier's monthly egress. So:
+   * a 2 minute interval, no polling at all while the tab is hidden, and the
+   * loop parks itself after IDLE_MS without interaction until you come back.
+   * ═══════════════════════════════════════════════════════════════════════ */
+  const IDLE_MS = 20 * 60 * 1000;
+  let lastActive = Date.now();
+  let parked = false;
+
+  for (const ev of ["pointerdown", "keydown", "focus"]) {
+    window.addEventListener(ev, () => {
+      lastActive = Date.now();
+      if (parked) { parked = false; pollNow(); scheduleTick(); }
+    }, { passive: true });
+  }
+
+  async function pollNow() {
+    if (busy || document.hidden) return;
+    try { await engine.refresh(); render(); }
+    catch (e) { LiveEngine.markStale(); render(); }
+  }
+
+  let tickTimer = null;
+  function scheduleTick() {
+    clearTimeout(tickTimer);
+    // jitter so a few hundred tabs don't line up on the same second
+    tickTimer = setTimeout(tick, POLL_MS + Math.random() * 15000);
+  }
+
+  async function tick() {
+    if (Date.now() - lastActive > IDLE_MS) { parked = true; return; }
+    await pollNow();
+    scheduleTick();
+  }
+
+  function startPolling() {
+    scheduleTick();
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) return;
+      lastActive = Date.now();
+      if (parked) parked = false;
+      pollNow();
+      scheduleTick();
+    });
+  }
+
+  /* ═══ boot ═════════════════════════════════════════════════════════════ */
+  async function bootLocal(note) {
+    engine = LocalEngine;
+    await engine.init();
+    showApp();
+    render();
+    if (note) toast(note, true);
+  }
+
+  async function boot() {
+    const configured = SUPABASE_URL && SUPABASE_KEY;
+
+    if (!configured) {
+      await bootLocal();
+      return;
+    }
+
+    showGate("Connecting…", "Loading the shared leaderboard.", {});
+
+    let hasToken;
+    try {
+      hasToken = await LiveEngine.connect();
+    } catch (e) {
+      await bootLocal("Couldn't load the leaderboard library — running in local mode.");
+      return;
+    }
+
+    const askForPasscode = (note) => showGate("Step Challenge", note, {
+      showInput: true,
+      button: "Unlock the board",
+      hint: "Ask the organizer for the passcode."
+    });
+
+    // A stored token means this browser unlocked before; try to reuse it.
+    if (hasToken) {
+      engine = LiveEngine;
+      try {
+        await engine.init();
+        showApp();
+        render();
+        startPolling();
+        return;
+      } catch (e) {
+        LiveEngine.lock();
+        askForPasscode("Your session expired. Enter the passcode to get back in.");
+        return;
+      }
+    }
+
+    askForPasscode("Enter the event passcode to see the leaderboard and log your steps.");
+  }
+
+  boot().catch((e) => {
+    bootLocal("Startup failed — running in local mode.");
+    console.error(e);
+  });
+})();
+</script>
+
+</body>
+</html>
