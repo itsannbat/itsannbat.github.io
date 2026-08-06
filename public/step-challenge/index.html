@@ -191,6 +191,21 @@
   .hero-dist { font-family: var(--mono); font-size: 12.5px; color: var(--text-2); }
   .hero-dist b { color: var(--text); font-weight: 700; }
 
+  /* the landmark ladder: what all that distance adds up to in real places */
+  .trek { display: flex; flex-direction: column; gap: 5px; margin-top: 9px; }
+  .trek-done, .trek-next { font-family: var(--mono); font-size: 11px; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; line-height: 1.45; }
+  .trek-done { color: var(--text-2); }
+  .trek-done b { color: var(--text); font-weight: 700; }
+  .trek-next { color: var(--muted); }
+  .trek-next b { color: var(--text-2); font-weight: 700; }
+
+  .trek-track { height: 5px; border-radius: 3px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
+  .trek-fill {
+    display: block; height: 100%; width: 0; border-radius: 3px;
+    background: linear-gradient(90deg, var(--dbt-deep), var(--dbt) 22%, var(--mid) 52%, var(--ftran) 80%, var(--ftran-deep));
+    transition: width .95s cubic-bezier(.22, 1, .36, 1);
+  }
+
   .hero-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
   .metric { background: var(--surface); padding: 11px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .metric-val { font-family: var(--mono); font-size: 17px; font-weight: 700; letter-spacing: -.035em; line-height: 1.2; }
@@ -207,6 +222,14 @@
   .legend i.dash { border-top-style: dashed; border-color: var(--line-strong); }
 
   .chart { width: 100%; height: auto; overflow: visible; }
+
+  /* the personal chart: same x-axis as the company one, deliberately shorter
+     and single-accent so it never competes with it */
+  .minechart { display: flex; flex-direction: column; gap: 6px; padding-top: 11px; border-top: 1px solid var(--line); }
+  .minechart-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .minechart-head .eyebrow { margin-right: auto; }
+  .minechart-note { font-family: var(--mono); font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+  .minechart-empty { font-family: var(--mono); font-size: 11.5px; color: var(--muted); padding: 12px 0 6px; }
 
   /* ─── podium ─────────────────────────────────────────────── */
   .podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: end; }
@@ -533,8 +556,12 @@
           </linearGradient>
         </defs>
         <path d="M17 1 33 10v18L17 37 1 28V10z" fill="none" stroke="url(#mkg)" stroke-width="2" />
-        <path d="M13 13l5.5 6-5.5 6" fill="none" stroke="url(#mkg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M21 13l5.5 6-5.5 6" fill="none" stroke="url(#mkg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".45" />
+        <!-- the pair of chevrons spans x 13→26.5, centre 19.75; the hexagon's centre is x 17,
+             so the group shifts left 2.75 to sit dead centre. y is already centred on 19. -->
+        <g transform="translate(-2.75,0)">
+          <path d="M13 13l5.5 6-5.5 6" fill="none" stroke="url(#mkg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M21 13l5.5 6-5.5 6" fill="none" stroke="url(#mkg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".45" />
+        </g>
       </svg>
       <div class="gate-title" id="gateTitle">Step Challenge</div>
       <p class="gate-body" id="gateBody">Sign in with your work email to join the leaderboard.</p>
@@ -563,8 +590,12 @@
           </linearGradient>
         </defs>
         <path d="M17 1 33 10v18L17 37 1 28V10z" fill="none" stroke="url(#mk)" stroke-width="2" />
-        <path d="M13 13l5.5 6-5.5 6" fill="none" stroke="url(#mk)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M21 13l5.5 6-5.5 6" fill="none" stroke="url(#mk)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".45" />
+        <!-- the pair of chevrons spans x 13→26.5, centre 19.75; the hexagon's centre is x 17,
+             so the group shifts left 2.75 to sit dead centre. y is already centred on 19. -->
+        <g transform="translate(-2.75,0)">
+          <path d="M13 13l5.5 6-5.5 6" fill="none" stroke="url(#mk)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M21 13l5.5 6-5.5 6" fill="none" stroke="url(#mk)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".45" />
+        </g>
       </svg>
       <div class="lockup-text">
         <div class="wordmark"><span class="o">dbt&nbsp;labs</span><span class="plus">+</span><span class="b">fivetran</span></div>
@@ -585,6 +616,13 @@
         <p class="eyebrow">Steps logged company-wide</p>
         <div class="hero-val num" id="hTotal">0</div>
         <div class="hero-dist" id="hDist">—</div>
+
+        <div class="trek" id="trek" hidden>
+          <p class="trek-done" id="trekDone">—</p>
+          <!-- decorative: the two lines either side already say it in words -->
+          <div class="trek-track" id="trekTrack" aria-hidden="true"><i class="trek-fill" id="trekFill"></i></div>
+          <p class="trek-next" id="trekNext">—</p>
+        </div>
       </div>
 
       <div class="hero-metrics">
@@ -627,6 +665,14 @@
         <div class="legend" id="chartNote"></div>
       </div>
       <div id="chartWrap"></div>
+
+      <div class="minechart" id="meChartBox" hidden>
+        <div class="minechart-head">
+          <p class="eyebrow">Your cumulative steps</p>
+          <span class="minechart-note" id="meChartNote"></span>
+        </div>
+        <div id="meChartWrap"></div>
+      </div>
     </div>
   </section>
 
@@ -851,6 +897,42 @@
   const initials = (name) => name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?";
   const miles = (steps) => steps / STEPS_PER_MILE;
 
+  /* ═══════════════════════════════════════════════════════════════════════
+   * LANDMARK LADDER — what everyone's steps add up to in real places.
+   * Ascending, in miles. Published lengths:
+   *   Golden Gate Bridge   1.7 mi  (8,981 ft total length, GG Bridge District)
+   *   English Channel      21 mi   (Dover → Cap Gris-Nez, the standard swim)
+   *   SF → LA              383 mi  (I-5)
+   *   Route 66             2,448 mi (Chicago → Santa Monica, original route)
+   *   Trans-Siberian       5,772 mi (9,289 km, Moscow → Vladivostok)
+   *   Great Wall of China  13,171 mi (21,196 km, 2012 SACH survey — all sections)
+   *   Pan-American Highway 19,000 mi (~30,000 km, the usual round figure)
+   *   Around the Earth     24,901 mi (40,075 km equatorial circumference)
+   * ═══════════════════════════════════════════════════════════════════════ */
+  const LANDMARKS = [
+    { mi: 1.7, past: "the Golden Gate Bridge, end to end", to: "the far side of the Golden Gate Bridge" },
+    { mi: 21, past: "the English Channel", to: "the French side of the English Channel" },
+    { mi: 383, past: "San Francisco to Los Angeles", to: "Los Angeles, 383 mi down the coast" },
+    { mi: 2448, past: "Route 66, Chicago to Santa Monica", to: "the end of Route 66 in Santa Monica" },
+    { mi: 5772, past: "the Trans-Siberian Railway", to: "Vladivostok, the end of the Trans-Siberian Railway" },
+    { mi: 13171, past: "the Great Wall of China", to: "the far end of the Great Wall of China" },
+    { mi: 19000, past: "the Pan-American Highway", to: "the end of the Pan-American Highway" },
+    { mi: 24901, past: "all the way around the Earth", to: "a full lap of the Earth" }
+  ];
+
+  /* The rung just cleared, the one ahead, and how far between them we are.
+   * Once every rung is behind us it keeps counting laps of the Earth. */
+  function trek(mi) {
+    let cleared = null, next = null;
+    for (const m of LANDMARKS) {
+      if (mi >= m.mi) cleared = m;
+      else { next = m; break; }
+    }
+    const from = cleared ? cleared.mi : 0;
+    const pct = next ? Math.max(0, Math.min(100, ((mi - from) / (next.mi - from)) * 100)) : 100;
+    return { cleared, next, pct, laps: mi / LANDMARKS[LANDMARKS.length - 1].mi };
+  }
+
   /* ═══ the board: the single shape render() consumes, whichever mode ═════ */
   const board = {
     mode: "local",     // "local" | "live"
@@ -926,6 +1008,70 @@
     return board.daily
       .filter((d) => inWindow(d.day) && d.day <= board.today)
       .map((d, i) => { cum += d.steps; return { i: daysBetween(board.start, d.day), day: d.day, cum }; });
+  }
+
+  /* ═══ the current walker's own day-by-day history ═══════════════════════
+   * A board snapshot only carries last7 plus totals, so a full personal
+   * cumulative line needs engine.entriesFor() — an RPC in live mode. It is
+   * therefore fetched once when the profile becomes known and again only
+   * after this walker writes; never on the polling tick, which cannot change
+   * their own numbers because nobody else logs for them.
+   * ═══════════════════════════════════════════════════════════════════════ */
+  let meEntries = null;      // day -> steps, as loaded for meEntriesFor
+  let meEntriesFor = null;   // the walker meEntries belongs to
+  let meStale = true;        // a fetch is wanted on the next render
+  let meFetching = false;
+  let meGen = 0;             // bumped whenever the cache moves, so a slow
+                             // in-flight fetch can tell it has been overtaken
+
+  function forgetMeEntries() { meEntries = null; meEntriesFor = null; meStale = true; meGen++; }
+  function invalidateMeEntries() { meStale = true; meGen++; }
+
+  function takeMeEntries(personId, entries) {
+    if (personId == null || personId !== board.meId) return;
+    meEntries = Object.assign({}, entries);
+    meEntriesFor = personId;
+    meStale = false;
+    meGen++;
+  }
+
+  /* Fire-and-forget: pulls the history, then repaints just the personal chart.
+   * Deliberately does not call render(), which would loop straight back here. */
+  function syncMeEntries() {
+    const id = board.meId;
+    if (id == null) {
+      if (meEntriesFor !== null || meEntries !== null) { forgetMeEntries(); renderMeChart(); }
+      return;
+    }
+    if (meFetching || (meEntriesFor === id && !meStale)) return;
+    meFetching = true;
+    const gen = meGen;
+    Promise.resolve()
+      .then(() => engine.entriesFor(id))
+      .then((got) => { if (meGen === gen) takeMeEntries(id, got || {}); })
+      .catch(() => { /* leave whatever is cached; the chart shows its empty state */ })
+      .then(() => { meFetching = false; renderMeChart(); });
+  }
+
+  /* Pull it again straight away — used after this walker's own writes so the
+   * chart never shows a value the board has already moved past. */
+  async function refreshMeEntries(personId) {
+    if (personId == null || personId !== board.meId) return;
+    try { takeMeEntries(personId, (await engine.entriesFor(personId)) || {}); }
+    catch (e) { invalidateMeEntries(); }
+  }
+
+  /* null while the history is still unknown, otherwise one point per elapsed
+   * challenge day — flat across days with nothing logged. */
+  function meSeries() {
+    if (board.meId == null || meEntriesFor !== board.meId || !meEntries) return null;
+    const out = [];
+    let cum = 0;
+    for (let d = board.start, last = lastCountedDay(); d <= last; d = addDays(d, 1)) {
+      cum += meEntries[d] || 0;
+      out.push({ i: daysBetween(board.start, d), day: d, cum });
+    }
+    return out;
   }
 
   /* ── toast ────────────────────────────────────────────────────────────── */
@@ -1305,6 +1451,100 @@
     </svg>`;
   }
 
+  /* ═══ personal chart ═══════════════════════════════════════════════════
+   * Same width, padding and day-index mapping as chart() so the two lines sit
+   * on one x-axis and can be read against each other. Shorter, no axis labels
+   * of its own, and a single --dbt accent: the orange→blue ramp stays reserved
+   * for company and rank meaning.
+   * ═══════════════════════════════════════════════════════════════════════ */
+  function meChart(pts, peak) {
+    const n = totalDays();
+    const W = 700, H = 78, L = 8, R = 8, T = 14, B = 10;
+    const yMax = Math.max(peak, 1) * 1.15;
+    const x = (i) => L + (n <= 1 ? 0 : (i / (n - 1)) * (W - L - R));
+    const y = (v) => H - B - (v / yMax) * (H - T - B);
+    const line = pts.map((p, k) => `${k ? "L" : "M"}${x(p.i).toFixed(1)},${y(p.cum).toFixed(1)}`).join(" ");
+    const last = pts[pts.length - 1];
+
+    const body = pts.length > 1
+      ? `<path d="${line} L${x(last.i).toFixed(1)},${y(0)} L${x(pts[0].i).toFixed(1)},${y(0)} Z" fill="url(#meArea)"/>
+        <path d="${line}" fill="none" stroke="var(--dbt)" stroke-width="2" stroke-linejoin="round"
+          stroke-linecap="round" vector-effect="non-scaling-stroke"/>`
+      : "";
+
+    return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img"
+        aria-label="Your cumulative steps: ${fmt(peak)} across the challenge so far">
+      <defs>
+        <linearGradient id="meArea" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="var(--dbt)" stop-opacity=".24"/>
+          <stop offset="1" stop-color="var(--dbt)" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <line x1="${L}" y1="${y(yMax * 0.5).toFixed(1)}" x2="${W - R}" y2="${y(yMax * 0.5).toFixed(1)}"
+        stroke="var(--line)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="${L}" y1="${y(0)}" x2="${W - R}" y2="${y(0)}" stroke="var(--line-strong)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <text x="${L}" y="${(y(peak) - 5).toFixed(1)}" fill="var(--muted)"
+        font-family="ui-monospace, monospace" font-size="9.5" letter-spacing=".04em">${fmt(peak)}</text>
+      ${body}
+      <circle cx="${x(last.i).toFixed(1)}" cy="${y(last.cum).toFixed(1)}" r="3" fill="var(--dbt)"/>
+    </svg>`;
+  }
+
+  function renderMeChart() {
+    const box = $("meChartBox");
+
+    if (board.meId == null) {           // no profile — the whole block goes away
+      box.hidden = true;
+      $("meChartWrap").innerHTML = "";
+      $("meChartNote").textContent = "";
+      return;
+    }
+
+    box.hidden = false;
+    const pts = meSeries();
+
+    if (pts == null) {                  // history not back from the engine yet
+      $("meChartNote").textContent = "";
+      $("meChartWrap").innerHTML = '<p class="minechart-empty">Loading your day-by-day history…</p>';
+      return;
+    }
+
+    const peak = pts.length ? pts[pts.length - 1].cum : 0;
+    if (peak <= 0) {
+      $("meChartNote").textContent = "";
+      $("meChartWrap").innerHTML = '<p class="minechart-empty">Nothing logged yet — your line starts with your first day.</p>';
+      return;
+    }
+
+    $("meChartNote").textContent = `${fmt(miles(peak))} mi · ${fmt(peak / elapsedDays())} per day`;
+    $("meChartWrap").innerHTML = meChart(pts, peak);
+  }
+
+  /* ═══ landmark ladder ══════════════════════════════════════════════════ */
+  function renderTrek(mi) {
+    const box = $("trek");
+    if (!(mi > 0)) { box.hidden = true; return; }   // nothing walked, nothing to say
+    box.hidden = false;
+
+    const t = trek(mi);
+    const pct = Math.round(t.pct);
+
+    $("trekDone").innerHTML = t.next == null
+      ? `Together we've gone <b>${t.laps.toFixed(2)}×</b> around the Earth`
+      : t.cleared
+        ? `Together we've walked past <b>${t.cleared.past}</b>`
+        : "Together we've set off — first landmark just ahead";
+
+    if (t.next == null) {
+      $("trekNext").textContent = "Every landmark on the list is behind us.";
+    } else {
+      const togo = t.next.mi - mi;
+      $("trekNext").innerHTML = `<b>${pct}%</b> of the way to ${t.next.to} · ${togo < 10 ? togo.toFixed(1) : fmt(togo)} mi to go`;
+    }
+
+    $("trekFill").style.width = pct + "%";
+  }
+
   /* ═══ sparkline ════════════════════════════════════════════════════════ */
   function sparkline(r) {
     const vals = r.last7;
@@ -1492,6 +1732,7 @@
     /* hero */
     $("hTotal").textContent = fmt(c.total);
     $("hDist").innerHTML = `<b>${fmt(miles(c.total))} miles</b> · ${fmt(miles(c.total) * 1.609)} km covered together`;
+    renderTrek(miles(c.total));
 
     $("mWalkers").textContent = fmt(c.walkers);
     $("mWalkersNote").textContent = c.walkers ? "on the board" : "nobody yet";
@@ -1514,6 +1755,8 @@
       ? `${fmt(c.total / Math.max(1, days))} per day company-wide`
       : "";
     $("chartWrap").innerHTML = chart();
+    renderMeChart();
+    syncMeEntries();
 
     /* podium */
     const top = list.slice().sort((a, b) => a.rank - b.rank).filter((r) => r.rank <= 3 && r.total > 0);
@@ -1672,6 +1915,7 @@
     await engine.release();
     catchupBase = {};
     catchupFor = null;
+    forgetMeEntries();
     setLogMode("one");
     $("joinName").focus();
   }));
@@ -1690,6 +1934,7 @@
     if (!inWindow(day)) throw new Error(`${shortDate(day)} is outside the challenge window.`);
 
     await engine.setEntry(targetId, day, n);
+    await refreshMeEntries(targetId);
     $("logSteps").value = "";
     toast(n === 0 ? `Cleared ${shortDate(day)}.` : `Logged ${fmt(n)} steps · ${shortDate(day)}`);
   }));
@@ -1697,6 +1942,10 @@
   $("logSteps").addEventListener("keydown", (e) => { if (e.key === "Enter") $("logBtn").click(); });
   $("logPerson").addEventListener("change", () => {
     renderWeek(null);
+    // the personal chart tracks board.meId, not the dropdown, but the selection
+    // moving is a cheap cue that the cache is worth re-checking
+    invalidateMeEntries();
+    syncMeEntries();
     if (logMode === "many") loadCatchup();
   });
 
@@ -1738,6 +1987,7 @@
     act(null, async () => {
       catchupBase = await engine.entriesFor(target);
       catchupFor = target;
+      takeMeEntries(target, catchupBase);   // same fetch serves the personal chart
       buildCatchup();
     });
   }
@@ -1830,6 +2080,7 @@
     if (!changes.length) throw new Error("Nothing to save yet.");
     const changed = await engine.setEntries(target, changes);
     catchupBase = await engine.entriesFor(target);
+    takeMeEntries(target, catchupBase);     // the post-save reload doubles as the chart refresh
     buildCatchup();
     toast(changed === 0 ? "Those values were already saved."
       : `Saved ${changed} day${changed === 1 ? "" : "s"}.`);
