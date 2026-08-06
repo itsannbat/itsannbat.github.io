@@ -321,6 +321,70 @@
   .av.sm { width: 25px; height: 28px; font-size: 9.5px; }
   .av.mine { color: #fff; background: linear-gradient(150deg, var(--dbt), var(--dbt-deep)); }
 
+  /* ─── mode toggle ────────────────────────────────────────── */
+  .seg { display: flex; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r); padding: 2px; gap: 2px; }
+
+  .seg button {
+    flex: 1;
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); background: none; border: 0; border-radius: 4px;
+    padding: 7px 10px; cursor: pointer;
+    transition: color .14s, background .14s;
+  }
+
+  .seg button:hover { color: var(--text); }
+  .seg button[aria-pressed="true"] { color: var(--text); background: var(--surface); box-shadow: 0 1px 2px rgba(0, 0, 0, .12); }
+
+  /* ─── catch up ───────────────────────────────────────────── */
+  .catchup-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+  .catchup-fill { margin-bottom: 10px; }
+  .catchup-fill .input { flex: 1.1; }
+  .catchup-fill .btn { flex: 1; white-space: nowrap; }
+
+  .daylist {
+    max-height: 264px; overflow-y: auto;
+    border: 1px solid var(--line); border-radius: var(--r);
+    background: var(--ground);
+    margin-bottom: 12px;
+  }
+
+  .dayrow {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .dayrow:last-child { border-bottom: 0; }
+  .dayrow:hover { background: var(--surface-2); }
+
+  .dayrow-lbl {
+    flex: 1; min-width: 0;
+    font-family: var(--mono); font-size: 11.5px; color: var(--text-2);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .dayrow.gap .dayrow-lbl { color: var(--muted); }
+  .dayrow.today .dayrow-lbl { color: var(--text); font-weight: 700; }
+
+  .dayrow-in {
+    width: 96px; flex: none;
+    font-size: 13px; padding: 5px 8px;
+    text-align: right;
+    background: var(--surface);
+  }
+
+  .dayrow.gap .dayrow-in { border-style: dashed; }
+  .dayrow.dirty .dayrow-in { border-color: var(--dbt); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dbt) 30%, transparent); }
+
+  .dayrow-tag {
+    flex: none; width: 34px; text-align: right;
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  .dayrow.dirty .dayrow-tag { color: var(--dbt-deep); font-weight: 700; }
+
   /* ─── week strip ─────────────────────────────────────────── */
   .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
   .day { display: flex; flex-direction: column; align-items: center; gap: 5px; background: none; border: 0; padding: 0; cursor: pointer; font-family: var(--mono); }
@@ -619,23 +683,49 @@
           <select class="input" id="logPerson"></select>
         </div>
 
-        <div class="row">
-          <div class="field" style="flex:1.15">
-            <label for="logSteps">Steps</label>
-            <input class="input big num" id="logSteps" type="number" min="0" max="200000" step="1" placeholder="8,000" inputmode="numeric">
+        <div class="seg" role="group" aria-label="How many days to log">
+          <button type="button" id="modeOne" aria-pressed="true">One day</button>
+          <button type="button" id="modeMany" aria-pressed="false">Catch up</button>
+        </div>
+
+        <!-- single day -->
+        <div id="oneDayView">
+          <div class="row">
+            <div class="field" style="flex:1.15">
+              <label for="logSteps">Steps</label>
+              <input class="input big num" id="logSteps" type="number" min="0" max="200000" step="1" placeholder="8,000" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="logDate">Date</label>
+              <input class="input" id="logDate" type="date">
+            </div>
           </div>
-          <div class="field">
-            <label for="logDate">Date</label>
-            <input class="input" id="logDate" type="date">
+
+          <button class="btn btn-primary" id="logBtn" type="button" style="width:100%;margin-top:14px">Log steps</button>
+
+          <div class="field" style="margin-top:14px">
+            <span class="eyebrow">Last 7 days</span>
+            <div class="week" id="week"></div>
+            <p class="hint">Tap a day to load it above and overwrite the count.</p>
           </div>
         </div>
 
-        <button class="btn btn-primary" id="logBtn" type="button">Log steps</button>
+        <!-- several days at once -->
+        <div id="manyView" hidden>
+          <div class="catchup-head">
+            <span class="eyebrow" id="catchupCount">—</span>
+          </div>
 
-        <div class="field">
-          <span class="eyebrow">Last 7 days</span>
-          <div class="week" id="week"></div>
-          <p class="hint">Tap a day to load it above and overwrite the count.</p>
+          <div class="row catchup-fill">
+            <input class="input num" id="fillValue" type="number" min="1" max="200000" step="100"
+                   placeholder="8,000" inputmode="numeric" aria-label="Steps to put in every empty day">
+            <button class="btn" id="fillBtn" type="button">Fill empty days</button>
+          </div>
+
+          <div class="daylist" id="dayList"></div>
+
+          <button class="btn btn-primary" id="catchupSave" type="button" disabled>No changes yet</button>
+          <p class="hint">Only the days you change get saved. Leave a day blank to skip it, or enter <b>0</b> to clear one.</p>
         </div>
       </div>
     </div>
@@ -967,6 +1057,33 @@
         else p.entries[day] = steps;
         save(); project();
       },
+      async setEntries(personId, rows) {
+        const p = state.people.find((x) => x.id === personId);
+        if (!p) throw new Error("That walker is no longer on the board.");
+        // validate the whole batch before writing any of it, matching set_entries()
+        for (const r of rows) {
+          if (r.steps == null) continue;
+          if (!inWindow(r.day)) throw new Error(`${shortDate(r.day)} is outside the challenge window.`);
+          if (r.day > board.today) throw new Error(`${shortDate(r.day)} is in the future.`);
+          if (!Number.isFinite(r.steps) || r.steps < 0) throw new Error(`${shortDate(r.day)} needs zero or more steps.`);
+          if (r.steps > 200000) throw new Error(`${shortDate(r.day)} is over the 200,000 daily limit.`);
+        }
+        let changed = 0;
+        for (const r of rows) {
+          if (r.steps == null) continue;
+          if (r.steps === 0) {
+            if (p.entries[r.day] != null) { delete p.entries[r.day]; changed++; }
+          } else if (p.entries[r.day] !== r.steps) {
+            p.entries[r.day] = r.steps; changed++;
+          }
+        }
+        save(); project();
+        return changed;
+      },
+      async entriesFor(personId) {
+        const p = state.people.find((x) => x.id === personId);
+        return p ? Object.assign({}, p.entries) : {};
+      },
       async addPerson(name) {
         state.people.push({ id: "p" + Date.now().toString(36), name, entries: {} });
         save(); project();
@@ -1080,6 +1197,16 @@
       async setEntry(personId, day, steps) {
         await rpc("set_entry", { t: token, walker: personId, on_day: day, steps });
         await pull();
+      },
+
+      async setEntries(personId, rows) {
+        const changed = await rpc("set_entries", { t: token, walker: personId, rows });
+        await pull();
+        return Number(changed) || 0;
+      },
+
+      async entriesFor(personId) {
+        return (await rpc("walker_entries", { t: token, walker: personId })) || {};
       },
 
       async addPerson(name) {
@@ -1543,6 +1670,9 @@
 
   $("switchBtn").addEventListener("click", () => act(null, async () => {
     await engine.release();
+    catchupBase = {};
+    catchupFor = null;
+    setLogMode("one");
     $("joinName").focus();
   }));
 
@@ -1565,7 +1695,10 @@
   }));
 
   $("logSteps").addEventListener("keydown", (e) => { if (e.key === "Enter") $("logBtn").click(); });
-  $("logPerson").addEventListener("change", () => renderWeek(null));
+  $("logPerson").addEventListener("change", () => {
+    renderWeek(null);
+    if (logMode === "many") loadCatchup();
+  });
 
   $("week").addEventListener("click", (e) => {
     const btn = e.target.closest(".day");
@@ -1574,6 +1707,133 @@
     $("logSteps").value = Number(btn.dataset.steps) > 0 ? btn.dataset.steps : "";
     $("logSteps").focus();
     $("logSteps").select();
+  });
+
+  /* ═══ catch up: log several days at once ═══════════════════════════════
+   * Every challenge day from the start through today is listed, prefilled with
+   * whatever is already stored. Only days whose value actually changed get
+   * sent, which keeps the request small and — more importantly — keeps the
+   * audit trail free of no-op rewrites.
+   * ═══════════════════════════════════════════════════════════════════════ */
+  let logMode = "one";
+  let catchupBase = {};      // day -> steps as loaded, for diffing
+  let catchupFor = null;     // walker the list was built for
+
+  function setLogMode(mode) {
+    logMode = mode;
+    $("modeOne").setAttribute("aria-pressed", String(mode === "one"));
+    $("modeMany").setAttribute("aria-pressed", String(mode === "many"));
+    $("oneDayView").hidden = mode !== "one";
+    $("manyView").hidden = mode !== "many";
+    if (mode === "many") loadCatchup();
+  }
+
+  $("modeOne").addEventListener("click", () => setLogMode("one"));
+  $("modeMany").addEventListener("click", () => setLogMode("many"));
+
+  function loadCatchup() {
+    const target = logTargetId();
+    if (!target) return;
+    $("dayList").innerHTML = '<div class="dayrow"><span class="dayrow-lbl">Loading…</span></div>';
+    act(null, async () => {
+      catchupBase = await engine.entriesFor(target);
+      catchupFor = target;
+      buildCatchup();
+    });
+  }
+
+  function buildCatchup() {
+    const last = board.today < board.end ? board.today : board.end;
+    const days = [];
+    for (let d = board.start; d <= last; d = addDays(d, 1)) days.push(d);
+    days.reverse();   // most recent first — that is what people correct most
+
+    $("dayList").innerHTML = days.map((day) => {
+      const has = catchupBase[day] != null;
+      const label = parseIso(day).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+      return `<div class="dayrow ${has ? "" : "gap"} ${day === board.today ? "today" : ""}" data-day="${day}">
+        <span class="dayrow-lbl">${label}${day === board.today ? " · today" : ""}</span>
+        <span class="dayrow-tag"></span>
+        <input class="input num dayrow-in" type="number" min="0" max="200000" step="1" inputmode="numeric"
+               data-day="${day}" value="${has ? catchupBase[day] : ""}"
+               placeholder="—" aria-label="Steps for ${label}">
+      </div>`;
+    }).join("");
+
+    const missing = days.filter((d) => catchupBase[d] == null).length;
+    $("catchupCount").textContent = missing === 0
+      ? `all ${days.length} days logged`
+      : `${missing} of ${days.length} days still empty`;
+    refreshCatchupState();
+  }
+
+  function catchupChanges() {
+    const out = [];
+    for (const el of document.querySelectorAll("#dayList .dayrow-in")) {
+      const day = el.dataset.day;
+      const raw = el.value.trim();
+      const base = catchupBase[day];
+      if (raw === "") continue;                       // blank means leave alone
+      const n = Math.round(Number(raw));
+      if (!Number.isFinite(n)) continue;
+      if (n === 0 && base == null) continue;          // clearing an already-empty day
+      if (base != null && n === base) continue;       // unchanged
+      out.push({ day, steps: n });
+    }
+    return out;
+  }
+
+  function refreshCatchupState() {
+    const changes = catchupChanges();
+    const keys = new Set(changes.map((c) => c.day));
+    for (const row of document.querySelectorAll("#dayList .dayrow")) {
+      const dirty = keys.has(row.dataset.day);
+      row.classList.toggle("dirty", dirty);
+      row.querySelector(".dayrow-tag").textContent = dirty ? "new" : "";
+    }
+    const btn = $("catchupSave");
+    btn.disabled = changes.length === 0;
+    btn.textContent = changes.length === 0
+      ? "No changes yet"
+      : `Save ${changes.length} day${changes.length === 1 ? "" : "s"}`;
+  }
+
+  $("dayList").addEventListener("input", refreshCatchupState);
+
+  $("fillBtn").addEventListener("click", () => {
+    const raw = $("fillValue").value.trim();
+    const n = Math.round(Number(raw));
+    if (raw === "" || !Number.isFinite(n) || n < 1) { $("fillValue").focus(); toast("Enter a step count to fill with."); return; }
+    if (n > 200000) { $("fillValue").focus(); toast("That's over the 200,000 daily limit."); return; }
+    let filled = 0;
+    for (const el of document.querySelectorAll("#dayList .dayrow-in")) {
+      if (el.value.trim() === "") { el.value = String(n); filled++; }
+    }
+    refreshCatchupState();
+    toast(filled ? `Filled ${filled} empty day${filled === 1 ? "" : "s"} — review, then save.` : "No empty days to fill.");
+  });
+
+  $("catchupSave").addEventListener("click", () => {
+    // handled outside act() so the reload isn't blocked by the busy guard
+    const t = logTargetId();
+    if (t && catchupFor && t !== catchupFor) {
+      loadCatchup();
+      toast("That walker changed — reloaded their days.");
+      return;
+    }
+    // act() restores the button's label and enabled state on the way out, so the
+    // save button has to be re-derived once it has settled
+    act($("catchupSave"), async () => {
+    const target = logTargetId();
+    if (!target) throw new Error("Create your profile first.");
+    const changes = catchupChanges();
+    if (!changes.length) throw new Error("Nothing to save yet.");
+    const changed = await engine.setEntries(target, changes);
+    catchupBase = await engine.entriesFor(target);
+    buildCatchup();
+    toast(changed === 0 ? "Those values were already saved."
+      : `Saved ${changed} day${changed === 1 ? "" : "s"}.`);
+    }).then(refreshCatchupState);
   });
 
   $("refreshBtn").addEventListener("click", () => act($("refreshBtn"), async () => {
